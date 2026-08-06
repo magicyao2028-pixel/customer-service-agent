@@ -1,0 +1,91 @@
+{
+  "evaluation_version": "0.1",
+  "method": "synthetic deterministic behavior checks; no production accuracy claim",
+  "summary": {
+    "total_cases": 5,
+    "passed_cases": 5,
+    "pass_rate": 1.0
+  },
+  "cases": [
+    {
+      "case_id": "CASE-DAMAGE-001",
+      "passed": true,
+      "checks": {
+        "status": true,
+        "category": true,
+        "handoff": true,
+        "policy": true
+      },
+      "actual": {
+        "status": "triaged",
+        "category": "damaged_product",
+        "handoff": false,
+        "policy_id": "POL-RET-001"
+      }
+    },
+    {
+      "case_id": "CASE-DELAY-002",
+      "passed": true,
+      "checks": {
+        "status": true,
+        "category": true,
+        "handoff": true,
+        "policy": true
+      },
+      "actual": {
+        "status": "triaged",
+        "category": "delivery_delay",
+        "handoff": false,
+        "policy_id": "POL-DEL-002"
+      }
+    },
+    {
+      "case_id": "CASE-SAFETY-003",
+      "passed": true,
+      "checks": {
+        "status": true,
+        "category": true,
+        "handoff": true,
+        "policy": true
+      },
+      "actual": {
+        "status": "escalated",
+        "category": "safety_concern",
+        "handoff": true,
+        "policy_id": "POL-SAFE-003"
+      }
+    },
+    {
+      "case_id": "CASE-REFUND-004",
+      "passed": true,
+      "checks": {
+        "status": true,
+        "category": true,
+        "handoff": true,
+        "policy": true
+      },
+      "actual": {
+        "status": "triaged",
+        "category": "refund_request",
+        "handoff": false,
+        "policy_id": "POL-REF-004"
+      }
+    },
+    {
+      "case_id": "CASE-UNKNOWN-005",
+      "passed": true,
+      "checks": {
+        "status": true,
+        "category": true,
+        "handoff": true,
+        "policy": true
+      },
+      "actual": {
+        "status": "no_policy",
+        "category": "unknown",
+        "handoff": true,
+        "policy_id": null
+      }
+    }
+  ]
+}

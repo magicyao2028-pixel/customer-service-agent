@@ -1,0 +1,20 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "customer-service-agent"
+version = "0.1.0"
+description = "Offline, policy-grounded customer-service triage and human handoff."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [{ name = "magicyao2028-pixel" }]
+dependencies = []
+
+[project.scripts]
+service-agent = "customer_service_agent.cli:main"
+service-agent-eval = "customer_service_agent.evaluation_cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]

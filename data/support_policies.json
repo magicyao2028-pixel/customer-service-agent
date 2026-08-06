@@ -1,0 +1,54 @@
+[
+  {
+    "policy_id": "POL-RET-001",
+    "category": "damaged_product",
+    "title": "Damaged Product Evidence and Review",
+    "updated_at": "2026-07-15",
+    "priority": "medium",
+    "sla_minutes": 240,
+    "owner": "Returns Support",
+    "keywords": ["damaged", "broken", "leaking", "crushed", "photo evidence"],
+    "escalation_keywords": ["chargeback", "media complaint", "third complaint"],
+    "required_evidence": ["order number", "clear photo or video of the damage"],
+    "resolution_steps": ["Verify the order and delivery date.", "Review the submitted damage evidence.", "Ask an authorized support lead to confirm refund or replacement eligibility."]
+  },
+  {
+    "policy_id": "POL-DEL-002",
+    "category": "delivery_delay",
+    "title": "Delivery Delay Investigation",
+    "updated_at": "2026-07-18",
+    "priority": "medium",
+    "sla_minutes": 120,
+    "owner": "Logistics Support",
+    "keywords": ["delivery delay", "late delivery", "tracking", "not arrived", "parcel delayed"],
+    "escalation_keywords": ["medicine", "event deadline", "chargeback"],
+    "required_evidence": ["order number", "latest tracking status"],
+    "resolution_steps": ["Confirm the carrier and latest tracking event.", "Check the promised delivery window.", "Escalate exceptions to the logistics owner before promising compensation."]
+  },
+  {
+    "policy_id": "POL-SAFE-003",
+    "category": "safety_concern",
+    "title": "Product Safety Incident Escalation",
+    "updated_at": "2026-07-22",
+    "priority": "critical",
+    "sla_minutes": 15,
+    "owner": "Duty Manager",
+    "keywords": ["allergic", "injury", "unsafe", "contamination", "became sick", "safety concern"],
+    "escalation_keywords": ["hospital", "police", "public post"],
+    "required_evidence": ["order number if available", "product batch or package photo", "concise incident description"],
+    "resolution_steps": ["Do not provide a medical conclusion.", "Preserve the incident details without unnecessary personal data.", "Assign the case to the duty manager within 15 minutes."]
+  },
+  {
+    "policy_id": "POL-REF-004",
+    "category": "refund_request",
+    "title": "Refund Eligibility Review",
+    "updated_at": "2026-07-12",
+    "priority": "low",
+    "sla_minutes": 480,
+    "owner": "Billing Support",
+    "keywords": ["refund", "money back", "cancel order", "return payment"],
+    "escalation_keywords": ["fraud", "chargeback", "legal action"],
+    "required_evidence": ["order number", "reason for the refund request"],
+    "resolution_steps": ["Verify payment and fulfillment status.", "Check the applicable return condition.", "Require an authorized reviewer to confirm the refund decision."]
+  }
+]

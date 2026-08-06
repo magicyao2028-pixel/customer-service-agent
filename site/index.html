@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Policy-grounded customer-service triage and handoff prototype">
+  <title>Customer Service Agent</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="shell">
+    <aside>
+      <div class="brand"><span>CS</span><strong>Service Agent</strong></div>
+      <nav>
+        <a class="active" href="#ticket">Ticket</a>
+        <a href="#decision">Decision</a>
+        <a href="#policy">Policy</a>
+        <a href="#handoff">Handoff</a>
+        <a href="#trace">Trace</a>
+      </nav>
+      <div class="boundary"><strong>Human-controlled</strong><small>No automatic reply<br>No refund action</small></div>
+    </aside>
+
+    <main>
+      <header>
+        <div><p class="eyebrow">GROUNDED CUSTOMER OPERATIONS</p><h1>Route every ticket with policy evidence.</h1><p class="subtitle">Redact sensitive text, classify the issue, retrieve an approved policy and prepare the right human handoff.</p></div>
+        <span class="status" id="run-status">Ready</span>
+      </header>
+
+      <section id="ticket" class="ticket-panel">
+        <div class="section-head"><div><p class="eyebrow">SYNTHETIC SUPPORT TICKET</p><h2>Incoming request</h2></div></div>
+        <label for="message">Customer message</label>
+        <textarea id="message" rows="4">The tea gift box arrived crushed and two sachets are damaged. What photo evidence do you need?</textarea>
+        <div class="ticket-actions">
+          <button id="run-button" type="button">Triage ticket</button>
+          <button class="example" data-message="I became sick and think this product may be unsafe." type="button">Safety incident</button>
+          <button class="example" data-message="The parcel has a delivery delay and affects an event deadline." type="button">Escalated delay</button>
+          <button class="example" data-message="Where is your office parking entrance?" type="button">No policy</button>
+        </div>
+      </section>
+
+      <section id="decision">
+        <div class="section-head"><div><p class="eyebrow">TRIAGE DECISION</p><h2>Review before response</h2></div><span class="decision-chip" id="decision-chip">Waiting</span></div>
+        <div class="summary-grid">
+          <article><span>Category</span><strong id="category">—</strong></article>
+          <article><span>Priority</span><strong id="priority">—</strong></article>
+          <article><span>Service target</span><strong id="sla">—</strong></article>
+          <article><span>Human handoff</span><strong id="handoff-required">—</strong></article>
+        </div>
+      </section>
+
+      <section id="policy">
+        <div class="section-head"><div><p class="eyebrow">SOURCE BEFORE DRAFT</p><h2>Approved policy evidence</h2></div></div>
+        <article class="policy-card" id="policy-card"><div class="empty">Run a ticket to retrieve policy evidence.</div></article>
+      </section>
+
+      <section id="handoff">
+        <div class="section-head"><div><p class="eyebrow">AUTHORIZED HUMAN OWNER</p><h2>Handoff packet</h2></div></div>
+        <div class="handoff-grid">
+          <article><span>Owner</span><strong id="owner">—</strong><small id="reason">No decision yet.</small></article>
+          <article><span>Response draft</span><p id="response">A policy-grounded draft will appear here.</p><small>Editing and approval are required before sending.</small></article>
+        </div>
+      </section>
+
+      <section id="trace">
+        <div class="section-head"><div><p class="eyebrow">REVIEWABLE ORCHESTRATION</p><h2>Agent trace</h2></div></div>
+        <ol class="trace-list" id="trace-list"><li>Waiting for a ticket.</li></ol>
+      </section>
+
+      <footer>v0.1 · Synthetic tickets and policies · No paid API · No autonomous customer action</footer>
+    </main>
+  </div>
+  <script src="app.js"></script>
+</body>
+</html>

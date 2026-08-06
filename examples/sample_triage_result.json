@@ -1,0 +1,74 @@
+{
+  "ticket_id": "TKT-2026-001",
+  "status": "triaged",
+  "sanitized_message": "The tea gift box arrived crushed and two sachets are damaged. What photo evidence do you need?",
+  "privacy": {
+    "redactions_applied": [],
+    "original_message_retained": false
+  },
+  "classification": {
+    "category": "damaged_product",
+    "confidence": "high",
+    "matched_keywords": [
+      "damaged",
+      "crushed",
+      "photo evidence"
+    ]
+  },
+  "priority": "medium",
+  "sla_minutes": 240,
+  "policy_citation": {
+    "policy_id": "POL-RET-001",
+    "title": "Damaged Product Evidence and Review",
+    "updated_at": "2026-07-15"
+  },
+  "required_evidence": [
+    "order number",
+    "clear photo or video of the damage"
+  ],
+  "next_steps": [
+    "Verify the order and delivery date.",
+    "Review the submitted damage evidence.",
+    "Ask an authorized support lead to confirm refund or replacement eligibility."
+  ],
+  "response_draft": "Thank you for contacting support. Under POL-RET-001, please provide order number, clear photo or video of the damage. A support reviewer will verify the information before confirming any resolution.",
+  "human_handoff": {
+    "required": false,
+    "owner": "Returns Support",
+    "reason": "routine queue",
+    "order_id": "ORDER-SYN-1001",
+    "customer_reply_requires_approval": true
+  },
+  "trace": [
+    {
+      "tool": "validate_ticket",
+      "purpose": "Validate ticket identity, channel and message.",
+      "status": "completed"
+    },
+    {
+      "tool": "redact_sensitive_data",
+      "purpose": "Remove email, payment-card and password text before policy matching.",
+      "status": "completed"
+    },
+    {
+      "tool": "classify_issue",
+      "purpose": "Match the sanitized ticket to explicit policy keywords.",
+      "status": "completed"
+    },
+    {
+      "tool": "retrieve_policy",
+      "purpose": "Attach the approved policy, evidence requirements and service deadline.",
+      "status": "completed"
+    },
+    {
+      "tool": "route_handoff",
+      "purpose": "Route critical or explicitly escalated cases to an authorized human owner.",
+      "status": "queued"
+    }
+  ],
+  "limitations": [
+    "Classification uses explicit English keyword rules, not semantic understanding.",
+    "The response draft is policy-grounded but still requires an authorized human before sending.",
+    "The public workflow uses synthetic policies and does not connect to a ticketing platform."
+  ]
+}

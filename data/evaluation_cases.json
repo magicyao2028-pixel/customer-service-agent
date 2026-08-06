@@ -1,0 +1,42 @@
+[
+  {
+    "case_id": "CASE-DAMAGE-001",
+    "ticket": {"ticket_id": "EVAL-001", "channel": "chat", "order_id": "ORDER-001", "customer_message": "The package arrived damaged and broken. I can provide photo evidence."},
+    "expected_status": "triaged",
+    "expected_category": "damaged_product",
+    "expected_handoff": false,
+    "expected_policy_id": "POL-RET-001"
+  },
+  {
+    "case_id": "CASE-DELAY-002",
+    "ticket": {"ticket_id": "EVAL-002", "channel": "marketplace", "order_id": "ORDER-002", "customer_message": "The parcel has a delivery delay and tracking has not changed."},
+    "expected_status": "triaged",
+    "expected_category": "delivery_delay",
+    "expected_handoff": false,
+    "expected_policy_id": "POL-DEL-002"
+  },
+  {
+    "case_id": "CASE-SAFETY-003",
+    "ticket": {"ticket_id": "EVAL-003", "channel": "email", "order_id": "ORDER-003", "customer_message": "I became sick and think the product may be unsafe."},
+    "expected_status": "escalated",
+    "expected_category": "safety_concern",
+    "expected_handoff": true,
+    "expected_policy_id": "POL-SAFE-003"
+  },
+  {
+    "case_id": "CASE-REFUND-004",
+    "ticket": {"ticket_id": "EVAL-004", "channel": "chat", "order_id": "ORDER-004", "customer_message": "I want a refund and my money back."},
+    "expected_status": "triaged",
+    "expected_category": "refund_request",
+    "expected_handoff": false,
+    "expected_policy_id": "POL-REF-004"
+  },
+  {
+    "case_id": "CASE-UNKNOWN-005",
+    "ticket": {"ticket_id": "EVAL-005", "channel": "chat", "customer_message": "Can you tell me where your office parking entrance is?"},
+    "expected_status": "no_policy",
+    "expected_category": "unknown",
+    "expected_handoff": true,
+    "expected_policy_id": null
+  }
+]
