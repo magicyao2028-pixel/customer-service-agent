@@ -5,7 +5,7 @@
 | Field | Value |
 | --- | --- |
 | Product | Customer Service Agent |
-| Version | 0.1 |
+| Version | 0.2 |
 | Status | Product-validation MVP |
 | Primary user | Support lead or customer-operations specialist in a small or medium-sized business |
 | Public data policy | Synthetic tickets and policies only |
@@ -18,7 +18,14 @@ Support requests arrive through several channels with inconsistent classificatio
 
 If each ticket passes through one transparent privacy, policy and handoff workflow, a support lead can review more consistent case packets and identify critical exceptions earlier.
 
-This hypothesis has not been validated with real support users. v0.1 verifies workflow behavior only.
+This hypothesis has not been validated with real support users. v0.2 verifies workflow behavior only.
+
+### v0.2 maintenance scope
+
+- represent conversation state explicitly from intake to terminal decision;
+- request a required order ID without retaining unredacted message text;
+- stop after at most two unsuccessful clarification replies and hand the case to a human;
+- let critical safety and no-policy cases bypass routine clarification.
 
 ## 4. v0.1 scope
 
@@ -54,7 +61,9 @@ This hypothesis has not been validated with real support users. v0.1 verifies wo
 | FR-06 | Abstain | Must | Unsupported requests receive no fabricated policy citation. |
 | FR-07 | Require approval | Must | Every customer-facing draft states that human approval is required. |
 | FR-08 | Export JSON | Should | CLI writes one structured triage result. |
+| FR-09 | Bound clarification | Must | Missing order ID triggers no more than two clarification replies. |
+| FR-10 | Preserve urgent routing | Must | Critical and unsupported cases do not wait in the routine clarification loop. |
 
 ## 6. Release gate
 
-The public v0.1 must pass all deterministic tests, preserve the privacy and abstention boundaries, use only synthetic data and clearly state that no reply is sent automatically.
+The public v0.2 must pass all deterministic tests, preserve privacy, abstention and urgent-routing boundaries, use only synthetic data and clearly state that no reply is sent automatically.

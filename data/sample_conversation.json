@@ -1,0 +1,13 @@
+{
+  "ticket": {
+    "ticket_id": "DEMO-CONV-001",
+    "channel": "chat",
+    "customer_message": "My parcel arrived damaged and broken."
+  },
+  "replies": [
+    {
+      "message": "Here is the order reference you requested.",
+      "order_id": "SYNTH-ORDER-2026-001"
+    }
+  ]
+}

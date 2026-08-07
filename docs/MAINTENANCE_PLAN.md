@@ -4,7 +4,7 @@ The initial repository is intentionally limited. Each round must add implementat
 
 | Round | Planned capability | Status |
 | --- | --- | --- |
-| M1 | Explicit conversation state and bounded clarification loop | Planned |
+| M1 | Explicit conversation state and bounded clarification loop | Completed in v0.2 |
 | M2 | Policy conflict, freshness and supersession handling | Planned |
 | M3 | Reviewer feedback capture and evaluation replay | Planned |
 | M4 | Broader privacy patterns and redaction-quality fixture | Planned |

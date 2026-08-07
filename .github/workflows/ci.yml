@@ -21,6 +21,8 @@ jobs:
         run: python -m unittest discover -s tests -v
       - name: Rebuild sample output
         run: service-agent data/sample_ticket.json --output output/triage.json
+      - name: Rebuild bounded conversation output
+        run: service-conversation data/sample_conversation.json --output output/conversation.json
       - name: Rebuild evaluation report
         run: service-agent-eval --json-output output/evaluation.json --markdown-output output/evaluation.md
 

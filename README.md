@@ -18,6 +18,7 @@ Small support teams receive order, delivery, refund and safety questions across 
 - validates and sanitizes a ticket before classification;
 - removes email, payment-card and password text from downstream output;
 - matches the request to an approved local policy;
+- tracks explicit conversation states and requests a missing order ID for at most two turns;
 - attaches required evidence, resolution steps, owner and SLA;
 - escalates critical or explicitly triggered cases to a human;
 - abstains when no policy supports a response;
@@ -28,10 +29,10 @@ Small support teams receive order, delivery, refund and safety questions across 
 | Capability | Evidence |
 | --- | --- |
 | AI product requirements | [PRD](docs/PRD.md), users, requirements, boundaries and release gate |
-| Agent workflow | Validate → redact → classify → retrieve policy → route handoff |
+| Agent workflow | Explicit state transitions, bounded clarification, policy retrieval and handoff |
 | Grounded customer service | Exact policy IDs, update dates, evidence lists and response ownership |
 | Safety and privacy | Sensitive-data redaction, critical escalation and no-policy abstention |
-| Engineering evidence | Typed Python package, CLI, nine tests and deterministic 5/5 fixture |
+| Engineering evidence | Typed Python package, two CLIs, 16 tests and deterministic 5/5 fixture |
 | Product experience | Zero-cost [browser prototype](site/) showing triage and handoff states |
 
 ## Core workflow
@@ -59,6 +60,7 @@ Requirements: Python 3.10 or later. No third-party runtime dependency is require
 ```bash
 python -m pip install -e .
 service-agent data/sample_ticket.json --output output/triage_result.json
+service-conversation data/sample_conversation.json --output output/conversation_result.json
 service-agent-eval
 python -m unittest discover -s tests -v
 ```
@@ -81,6 +83,8 @@ Then visit `http://localhost:8000`.
 
 The synthetic damaged-product ticket is classified under `POL-RET-001`. The output includes required photo evidence, a 240-minute service target, a response draft, an owner and a five-step execution trace. See [`examples/sample_triage_result.json`](examples/sample_triage_result.json).
 
+The bounded conversation example starts without an order ID, enters `needs_clarification`, receives the structured ID on turn one and then moves to `triaged`. See [`examples/sample_conversation_result.json`](examples/sample_conversation_result.json).
+
 The public fixture covers damaged products, delivery delays, safety incidents, refunds and unsupported requests. Its 5/5 result is regression evidence for those engineered cases, not a production accuracy estimate. See the [evaluation report](examples/evaluation_report.md).
 
 ## Honest boundaries
@@ -89,7 +93,7 @@ The public fixture covers damaged products, delivery delays, safety incidents, r
 - Four synthetic policies do not represent a complete service knowledge base.
 - Response drafts are not sent automatically and require human approval.
 - Redaction covers selected common patterns, not every form of personal information.
-- There is no ticket database, conversation state, authentication, queue, integration or production deployment.
+- Conversation state is in memory only; there is no database, authentication, queue, integration or production deployment.
 - No claim is made about reduced handling time, customer satisfaction or classification accuracy.
 
 ## Documentation
@@ -106,7 +110,7 @@ The public fixture covers damaged products, delivery delays, safety incidents, r
 ## Roadmap
 
 - v0.1: grounded triage, redaction, policy citations, escalation, abstention and static demo;
-- v0.2: explicit multi-turn conversation state and clarification loop;
+- v0.2: explicit multi-turn conversation state and a two-turn clarification limit;
 - v0.3: policy-conflict and freshness handling;
 - v0.4: feedback replay and service-quality evaluation;
 - v0.5: optional local/model adapter behind the deterministic safety boundary;
