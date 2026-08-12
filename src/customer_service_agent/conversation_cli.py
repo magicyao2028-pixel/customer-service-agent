@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import argparse
 import json
+from datetime import date
 from pathlib import Path
 from typing import Any
 
@@ -14,17 +15,18 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Run a bounded support conversation from JSON.")
     parser.add_argument("conversation", type=Path, help="JSON with ticket and optional replies")
     parser.add_argument("--policies", type=Path, default=Path("data/support_policies.json"))
+    parser.add_argument("--analysis-date", default=date.today().isoformat(), help="Policy resolution date in YYYY-MM-DD")
     parser.add_argument("--output", type=Path)
     return parser.parse_args()
 
 
-def run_transcript(payload: dict[str, Any], policies: Path) -> dict[str, Any]:
+def run_transcript(payload: dict[str, Any], policies: Path, analysis_date: str | None = None) -> dict[str, Any]:
     ticket = payload.get("ticket")
     replies = payload.get("replies", [])
     if not isinstance(ticket, dict) or not isinstance(replies, list):
         raise ValueError("conversation must contain a ticket object and a replies list")
 
-    flow = ConversationFlow(CustomerServiceAgent(load_policies(policies)))
+    flow = ConversationFlow(CustomerServiceAgent(load_policies(policies), analysis_date=analysis_date))
     session = flow.start(ticket)
     for reply in replies:
         if session.state != ConversationState.NEEDS_CLARIFICATION:
@@ -40,7 +42,7 @@ def main() -> None:
     payload = json.loads(args.conversation.read_text(encoding="utf-8"))
     if not isinstance(payload, dict):
         raise ValueError("conversation file must contain a JSON object")
-    result = run_transcript(payload, args.policies)
+    result = run_transcript(payload, args.policies, args.analysis_date)
     rendered = json.dumps(result, ensure_ascii=False, indent=2)
     if args.output:
         args.output.parent.mkdir(parents=True, exist_ok=True)

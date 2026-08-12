@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "customer-service-agent"
-version = "0.2.0"
-description = "Offline, policy-grounded customer-service triage and human handoff."
+version = "0.3.0"
+description = "Offline customer-service triage with policy freshness, conflict and supersession controls."
 readme = "README.md"
 requires-python = ">=3.10"
 license = { text = "MIT" }

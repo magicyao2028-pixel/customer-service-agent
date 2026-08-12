@@ -1,7 +1,8 @@
+import json
 import unittest
 from pathlib import Path
 
-from customer_service_agent import CustomerServiceAgent, SupportTicket, load_policies
+from customer_service_agent import CustomerServiceAgent, SupportPolicy, SupportTicket, load_policies
 
 
 ROOT = Path(__file__).parents[1]
@@ -9,7 +10,7 @@ POLICIES = ROOT / "data" / "support_policies.json"
 
 
 def agent() -> CustomerServiceAgent:
-    return CustomerServiceAgent(load_policies(POLICIES))
+    return CustomerServiceAgent(load_policies(POLICIES), analysis_date="2026-08-12")
 
 
 class CustomerServiceAgentTests(unittest.TestCase):
@@ -24,6 +25,12 @@ class CustomerServiceAgentTests(unittest.TestCase):
         self.assertEqual(result["status"], "triaged")
         self.assertEqual(result["classification"]["category"], "damaged_product")
         self.assertEqual(result["policy_citation"]["policy_id"], "POL-RET-001")
+        self.assertEqual(result["policy_resolution"]["status"], "selected")
+        self.assertIn(
+            {"policy_id": "POL-RET-000", "reason": "superseded"},
+            result["policy_resolution"]["excluded_policies"],
+        )
+        self.assertEqual(result["policy_citation"]["supersedes_policy_ids"], ["POL-RET-000"])
         self.assertFalse(result["human_handoff"]["required"])
 
     def test_escalates_safety_incident_to_duty_manager(self):
@@ -75,10 +82,70 @@ class CustomerServiceAgentTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "channel must be one of"):
             SupportTicket.from_mapping({"ticket_id": "T-6", "channel": "phone", "customer_message": "Refund"})
 
-    def test_policy_ids_and_categories_are_unique(self):
+    def test_policy_ids_are_unique_and_categories_can_have_versions(self):
         policies = load_policies(POLICIES)
         self.assertEqual(len({item.policy_id for item in policies}), len(policies))
-        self.assertEqual(len({item.category for item in policies}), len(policies))
+        self.assertLess(len({item.category for item in policies}), len(policies))
+
+    def test_stale_policy_abstains_with_current_date_evidence(self):
+        result = CustomerServiceAgent(
+            load_policies(POLICIES), analysis_date="2028-01-01"
+        ).handle({"ticket_id": "T-7", "channel": "chat", "customer_message": "Refund please"})
+
+        self.assertEqual(result["status"], "policy_stale")
+        self.assertIsNone(result["policy_citation"])
+        self.assertTrue(result["human_handoff"]["required"])
+        self.assertEqual(result["policy_resolution"]["excluded_policies"][0]["reason"], "review_overdue")
+
+    def test_equal_category_matches_abstain_as_policy_conflict(self):
+        result = agent().handle({
+            "ticket_id": "T-8",
+            "channel": "chat",
+            "customer_message": "The parcel is damaged and I also need a refund.",
+        })
+
+        self.assertEqual(result["status"], "policy_conflict")
+        self.assertEqual(result["classification"]["category"], "multiple")
+        self.assertIsNone(result["policy_citation"])
+
+    def test_unresolved_same_category_versions_abstain(self):
+        policies = load_policies(POLICIES)
+        source = next(item for item in policies if item.policy_id == "POL-DEL-002")
+        extra = SupportPolicy.from_mapping({
+            **source.__dict__,
+            "policy_id": "POL-DEL-ALT",
+            "title": "Alternative Delivery Rule",
+            "keywords": list(source.keywords),
+            "escalation_keywords": list(source.escalation_keywords),
+            "required_evidence": list(source.required_evidence),
+            "resolution_steps": list(source.resolution_steps),
+            "supersedes_policy_ids": [],
+        })
+        result = CustomerServiceAgent(
+            [*policies, extra], analysis_date="2026-08-12"
+        ).handle({"ticket_id": "T-9", "channel": "chat", "customer_message": "tracking not arrived"})
+
+        self.assertEqual(result["status"], "policy_conflict")
+        self.assertIn("multiple current policies", result["policy_resolution"]["reason"])
+
+    def test_rejects_unknown_supersession_and_cycles(self):
+        payload = json.loads(POLICIES.read_text(encoding="utf-8"))
+        payload[1]["supersedes_policy_ids"] = ["POL-MISSING"]
+        with self.assertRaisesRegex(ValueError, "supersedes unknown policies"):
+            from tempfile import TemporaryDirectory
+            with TemporaryDirectory() as directory:
+                path = Path(directory) / "policies.json"
+                path.write_text(json.dumps(payload), encoding="utf-8")
+                load_policies(path)
+
+        payload = json.loads(POLICIES.read_text(encoding="utf-8"))
+        payload[0]["supersedes_policy_ids"] = ["POL-RET-001"]
+        with self.assertRaisesRegex(ValueError, "must not contain a cycle"):
+            from tempfile import TemporaryDirectory
+            with TemporaryDirectory() as directory:
+                path = Path(directory) / "policies.json"
+                path.write_text(json.dumps(payload), encoding="utf-8")
+                load_policies(path)
 
 
 if __name__ == "__main__":

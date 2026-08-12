@@ -6,5 +6,7 @@
 - The original message is not included in the result.
 - No response, refund, compensation or external action is executed.
 - Safety incidents and unsupported requests require human handoff.
+- Stale policies, category conflicts and unresolved current versions are blocked rather than guessed.
+- The analysis date and version-selection evidence are included in the output for review.
 
 The redactor is not a complete data-loss-prevention system. A production service would need comprehensive data classification, authenticated users, role-based policy access, encryption, retention and deletion controls, tamper-evident audit logs, incident response and independent security testing.

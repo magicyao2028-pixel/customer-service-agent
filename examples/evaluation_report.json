@@ -1,5 +1,5 @@
 {
-  "evaluation_version": "0.1",
+  "evaluation_version": "0.3",
   "method": "synthetic deterministic behavior checks; no production accuracy claim",
   "summary": {
     "total_cases": 5,

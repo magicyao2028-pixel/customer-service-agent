@@ -16,6 +16,7 @@ class ConversationState(str, Enum):
     TRIAGED = "triaged"
     ESCALATED = "escalated"
     NO_POLICY = "no_policy"
+    POLICY_BLOCKED = "policy_blocked"
     HUMAN_HANDOFF = "human_handoff"
 
 
@@ -23,6 +24,7 @@ TERMINAL_STATES = {
     ConversationState.TRIAGED,
     ConversationState.ESCALATED,
     ConversationState.NO_POLICY,
+    ConversationState.POLICY_BLOCKED,
     ConversationState.HUMAN_HANDOFF,
 }
 
@@ -144,6 +146,13 @@ class ConversationFlow:
             self._finish(session, candidate, ConversationState.ESCALATED, "urgent case bypassed clarification")
         elif candidate["status"] == "no_policy":
             self._finish(session, candidate, ConversationState.NO_POLICY, "no approved policy matched")
+        elif candidate["status"] in {"policy_conflict", "policy_stale"}:
+            self._finish(
+                session,
+                candidate,
+                ConversationState.POLICY_BLOCKED,
+                "policy version resolution requires human review",
+            )
         elif self._requires_order_id(candidate) and not session.order_id:
             session.pending_prompt = (
                 "Please provide the order ID so a support reviewer can verify the policy evidence. "

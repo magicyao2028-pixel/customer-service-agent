@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.3.0 - 2026-08-12
+
+- added effective, review-due and supersession metadata to validated policies;
+- added deterministic current-policy resolution with superseded-version evidence;
+- added safe abstention and human handoff for category conflicts, unresolved versions and stale policies;
+- added an explicit `POLICY_BLOCKED` conversation state for policy-governance failures;
+- added a reproducible analysis date, policy-resolution documentation and four regression tests.
+
 ## 0.2.0 - 2026-08-07
 
 - added explicit conversation states and auditable state-transition timelines;

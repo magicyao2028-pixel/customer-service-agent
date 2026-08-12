@@ -1,10 +1,12 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
+from datetime import date
 from typing import Any, Iterable
 
 from .models import SupportPolicy, SupportTicket
 from .privacy import redact_sensitive_text
+from .policy_resolution import PolicyResolution, resolve_policy
 
 
 @dataclass
@@ -18,10 +20,15 @@ class AgentTrace:
 class CustomerServiceAgent:
     """Runs deterministic support triage with cited policies and human handoff."""
 
-    def __init__(self, policies: Iterable[SupportPolicy]) -> None:
+    def __init__(self, policies: Iterable[SupportPolicy], analysis_date: str | None = None) -> None:
         self.policies = list(policies)
         if not self.policies:
             raise ValueError("At least one support policy is required")
+        self.analysis_date = analysis_date or date.today().isoformat()
+        try:
+            date.fromisoformat(self.analysis_date)
+        except ValueError as exc:
+            raise ValueError("analysis_date must use YYYY-MM-DD") from exc
 
     def handle(self, ticket: SupportTicket | dict[str, Any]) -> dict[str, Any]:
         item = ticket if isinstance(ticket, SupportTicket) else SupportTicket.from_mapping(ticket)
@@ -35,16 +42,31 @@ class CustomerServiceAgent:
             "redacted" if redactions else "completed",
         )
 
-        policy, matched_keywords = self._match_policy(sanitized_message)
+        resolution = resolve_policy(self.policies, sanitized_message, self.analysis_date)
+        policy = resolution.policy
+        matched_keywords = list(resolution.matched_keywords)
         trace.record("classify_issue", "Match the sanitized ticket to explicit policy keywords.")
         if policy is None:
-            trace.record("evidence_gate", "Stop automation because no approved policy supports a response.", "no_policy")
-            return self._unsupported(item, sanitized_message, redactions, trace.steps)
+            trace.record(
+                "resolve_policy_version",
+                "Check policy effective dates, review windows, conflicts and supersession links.",
+                resolution.status,
+            )
+            trace.record(
+                "evidence_gate",
+                "Stop automation because no single current policy supports a response.",
+                resolution.status,
+            )
+            return self._unsupported(item, sanitized_message, redactions, trace.steps, resolution)
 
         lowered = sanitized_message.casefold()
         escalation_hits = [term for term in policy.escalation_keywords if term.casefold() in lowered]
         requires_handoff = policy.priority == "critical" or bool(escalation_hits)
         priority = "critical" if policy.priority == "critical" else "high" if escalation_hits else policy.priority
+        trace.record(
+            "resolve_policy_version",
+            "Select one current unsuperseded policy and expose excluded versions.",
+        )
         trace.record("retrieve_policy", "Attach the approved policy, evidence requirements and service deadline.")
         trace.record(
             "route_handoff",
@@ -65,12 +87,16 @@ class CustomerServiceAgent:
                 "confidence": confidence,
                 "matched_keywords": matched_keywords,
             },
+            "policy_resolution": resolution.to_dict(self.analysis_date),
             "priority": priority,
             "sla_minutes": policy.sla_minutes,
             "policy_citation": {
                 "policy_id": policy.policy_id,
                 "title": policy.title,
                 "updated_at": policy.updated_at,
+                "effective_from": policy.effective_from,
+                "review_due_at": policy.review_due_at,
+                "supersedes_policy_ids": list(policy.supersedes_policy_ids),
             },
             "required_evidence": list(policy.required_evidence),
             "next_steps": list(policy.resolution_steps),
@@ -90,18 +116,6 @@ class CustomerServiceAgent:
             ],
         }
 
-    def _match_policy(self, message: str) -> tuple[SupportPolicy | None, list[str]]:
-        lowered = message.casefold()
-        ranked: list[tuple[int, str, SupportPolicy, list[str]]] = []
-        for policy in self.policies:
-            matched = [term for term in policy.keywords if term.casefold() in lowered]
-            if matched:
-                ranked.append((len(matched), policy.policy_id, policy, matched))
-        if not ranked:
-            return None, []
-        _, _, policy, matched = sorted(ranked, key=lambda item: (-item[0], item[1]))[0]
-        return policy, matched
-
     @staticmethod
     def _response_draft(policy: SupportPolicy, requires_handoff: bool) -> str:
         evidence = ", ".join(policy.required_evidence)
@@ -115,32 +129,38 @@ class CustomerServiceAgent:
             "A support reviewer will verify the information before confirming any resolution."
         )
 
-    @staticmethod
     def _unsupported(
+        self,
         ticket: SupportTicket,
         sanitized_message: str,
         redactions: list[str],
         trace: list[dict[str, str]],
+        resolution: PolicyResolution,
     ) -> dict[str, Any]:
         return {
             "ticket_id": ticket.ticket_id,
-            "status": "no_policy",
+            "status": resolution.status,
             "sanitized_message": sanitized_message,
             "privacy": {"redactions_applied": redactions, "original_message_retained": False},
-            "classification": {"category": "unknown", "confidence": "none", "matched_keywords": []},
+            "classification": {
+                "category": resolution.category,
+                "confidence": "none",
+                "matched_keywords": list(resolution.matched_keywords),
+            },
+            "policy_resolution": resolution.to_dict(self.analysis_date),
             "priority": "needs_review",
             "sla_minutes": None,
             "policy_citation": None,
             "required_evidence": [],
-            "next_steps": ["Assign the case to a support lead for policy selection or clarification."],
-            "response_draft": "I do not have an approved policy for this request. A human support lead must review it before a reply is sent.",
+            "next_steps": ["Assign the case to a support lead for current-policy selection or clarification."],
+            "response_draft": "I do not have one unambiguous current policy for this request. A human support lead must review it before a reply is sent.",
             "human_handoff": {
                 "required": True,
                 "owner": "Support Lead",
-                "reason": "no approved policy matched",
+                "reason": resolution.reason,
                 "order_id": ticket.order_id,
                 "customer_reply_requires_approval": True,
             },
             "trace": trace,
-            "limitations": ["No approved policy supported an automated draft; the workflow abstained."],
+            "limitations": ["No single current policy supported an automated draft; the workflow abstained."],
         }

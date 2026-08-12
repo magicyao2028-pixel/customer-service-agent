@@ -15,12 +15,34 @@
       "photo evidence"
     ]
   },
+  "policy_resolution": {
+    "analysis_date": "2026-08-12",
+    "status": "selected",
+    "category": "damaged_product",
+    "selected_policy_id": "POL-RET-001",
+    "candidate_policy_ids": [
+      "POL-RET-000",
+      "POL-RET-001"
+    ],
+    "excluded_policies": [
+      {
+        "policy_id": "POL-RET-000",
+        "reason": "superseded"
+      }
+    ],
+    "reason": "one current unsuperseded policy selected"
+  },
   "priority": "medium",
   "sla_minutes": 240,
   "policy_citation": {
     "policy_id": "POL-RET-001",
     "title": "Damaged Product Evidence and Review",
-    "updated_at": "2026-07-15"
+    "updated_at": "2026-07-15",
+    "effective_from": "2026-08-01",
+    "review_due_at": "2027-07-31",
+    "supersedes_policy_ids": [
+      "POL-RET-000"
+    ]
   },
   "required_evidence": [
     "order number",
@@ -53,6 +75,11 @@
     {
       "tool": "classify_issue",
       "purpose": "Match the sanitized ticket to explicit policy keywords.",
+      "status": "completed"
+    },
+    {
+      "tool": "resolve_policy_version",
+      "purpose": "Select one current unsuperseded policy and expose excluded versions.",
       "status": "completed"
     },
     {

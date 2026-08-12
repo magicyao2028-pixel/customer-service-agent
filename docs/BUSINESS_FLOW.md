@@ -6,9 +6,9 @@ flowchart TB
     V -->|No| X[Return clear validation error]
     V -->|Yes| P[Redact selected sensitive text]
     P --> C[Classify with explicit rules]
-    C --> K{Approved policy found?}
-    K -->|No| A[Assign support lead and abstain]
-    K -->|Yes| R[Attach policy, evidence and SLA]
+    C --> K{One current policy resolved?}
+    K -->|No: missing, stale or conflict| A[Assign support lead and abstain]
+    K -->|Yes| R[Attach policy version, evidence and SLA]
     R --> E{Critical or escalation trigger?}
     E -->|Yes| H[Priority human handoff]
     E -->|No| Q[Routine support queue]
@@ -27,3 +27,5 @@ flowchart TB
 | Authorized business owner | Approves refunds, compensation and other high-impact actions. |
 
 The workflow never sends a reply, promises a refund or makes a medical conclusion.
+
+Policy owners must provide effective dates, review deadlines and explicit supersession links. A policy conflict is treated as a governance exception, not as permission for the Agent to guess.

@@ -18,6 +18,8 @@ Small support teams receive order, delivery, refund and safety questions across 
 - validates and sanitizes a ticket before classification;
 - removes email, payment-card and password text from downstream output;
 - matches the request to an approved local policy;
+- resolves policy versions by effective date, review deadline and explicit supersession;
+- abstains when the best categories conflict or no single current policy can be selected;
 - tracks explicit conversation states and requests a missing order ID for at most two turns;
 - attaches required evidence, resolution steps, owner and SLA;
 - escalates critical or explicitly triggered cases to a human;
@@ -30,9 +32,9 @@ Small support teams receive order, delivery, refund and safety questions across 
 | --- | --- |
 | AI product requirements | [PRD](docs/PRD.md), users, requirements, boundaries and release gate |
 | Agent workflow | Explicit state transitions, bounded clarification, policy retrieval and handoff |
-| Grounded customer service | Exact policy IDs, update dates, evidence lists and response ownership |
+| Grounded customer service | Effective dates, review deadlines, supersession chains, exact citations and response ownership |
 | Safety and privacy | Sensitive-data redaction, critical escalation and no-policy abstention |
-| Engineering evidence | Typed Python package, two CLIs, 16 tests and deterministic 5/5 fixture |
+| Engineering evidence | Typed Python package, two CLIs, 20 tests and deterministic 5/5 fixture |
 | Product experience | Zero-cost [browser prototype](site/) showing triage and handoff states |
 
 ## Core workflow
@@ -41,9 +43,9 @@ Small support teams receive order, delivery, refund and safety questions across 
 flowchart LR
     T[Incoming ticket] --> V[Validate and redact]
     V --> C[Classify issue]
-    C --> P{Approved policy found?}
-    P -->|No| H[Abstain and hand to support lead]
-    P -->|Yes| R[Retrieve policy and SLA]
+    C --> P{One current policy resolved?}
+    P -->|No: missing, stale or conflict| H[Abstain and hand to support lead]
+    P -->|Yes| R[Retrieve policy, version and SLA]
     R --> E{Critical or escalation signal?}
     E -->|Yes| D[Duty owner handoff]
     E -->|No| Q[Routine support queue]
@@ -59,8 +61,8 @@ Requirements: Python 3.10 or later. No third-party runtime dependency is require
 
 ```bash
 python -m pip install -e .
-service-agent data/sample_ticket.json --output output/triage_result.json
-service-conversation data/sample_conversation.json --output output/conversation_result.json
+service-agent data/sample_ticket.json --analysis-date 2026-08-12 --output output/triage_result.json
+service-conversation data/sample_conversation.json --analysis-date 2026-08-12 --output output/conversation_result.json
 service-agent-eval
 python -m unittest discover -s tests -v
 ```
@@ -81,7 +83,7 @@ Then visit `http://localhost:8000`.
 
 ## Sample output
 
-The synthetic damaged-product ticket is classified under `POL-RET-001`. The output includes required photo evidence, a 240-minute service target, a response draft, an owner and a five-step execution trace. See [`examples/sample_triage_result.json`](examples/sample_triage_result.json).
+The synthetic damaged-product ticket resolves to `POL-RET-001`, while the prior `POL-RET-000` version is exposed as superseded. The output includes version evidence, required photo evidence, a 240-minute service target, a response draft and an owner. See [`examples/sample_triage_result.json`](examples/sample_triage_result.json) and the [policy-resolution design](docs/POLICY_RESOLUTION.md).
 
 The bounded conversation example starts without an order ID, enters `needs_clarification`, receives the structured ID on turn one and then moves to `triaged`. See [`examples/sample_conversation_result.json`](examples/sample_conversation_result.json).
 
@@ -90,7 +92,7 @@ The public fixture covers damaged products, delivery delays, safety incidents, r
 ## Honest boundaries
 
 - English keyword matching is not semantic understanding.
-- Four synthetic policies do not represent a complete service knowledge base.
+- Five synthetic policy records across four categories do not represent a complete service knowledge base.
 - Response drafts are not sent automatically and require human approval.
 - Redaction covers selected common patterns, not every form of personal information.
 - Conversation state is in memory only; there is no database, authentication, queue, integration or production deployment.
@@ -111,7 +113,7 @@ The public fixture covers damaged products, delivery delays, safety incidents, r
 
 - v0.1: grounded triage, redaction, policy citations, escalation, abstention and static demo;
 - v0.2: explicit multi-turn conversation state and a two-turn clarification limit;
-- v0.3: policy-conflict and freshness handling;
+- v0.3: policy-conflict, freshness and supersession handling;
 - v0.4: feedback replay and service-quality evaluation;
 - v0.5: optional local/model adapter behind the deterministic safety boundary;
 - v1.0: controlled private pilot with authenticated support users.

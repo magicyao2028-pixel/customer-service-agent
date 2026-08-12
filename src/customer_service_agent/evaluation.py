@@ -15,7 +15,7 @@ def evaluate_cases(policy_path: Path, case_path: Path) -> dict[str, Any]:
         raise ValueError(f"Invalid evaluation JSON: {exc.msg}") from exc
     if not isinstance(cases, list) or not cases:
         raise ValueError("Evaluation cases must be a non-empty list")
-    agent = CustomerServiceAgent(load_policies(policy_path))
+    agent = CustomerServiceAgent(load_policies(policy_path), analysis_date="2026-08-12")
     results = []
     seen: set[str] = set()
     for case in cases:
@@ -42,7 +42,7 @@ def evaluate_cases(policy_path: Path, case_path: Path) -> dict[str, Any]:
             },
         })
     return {
-        "evaluation_version": "0.1",
+        "evaluation_version": "0.3",
         "method": "synthetic deterministic behavior checks; no production accuracy claim",
         "summary": {
             "total_cases": len(results),

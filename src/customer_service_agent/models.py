@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 from dataclasses import dataclass
+from datetime import date
 from pathlib import Path
 from typing import Any
 
@@ -35,6 +36,9 @@ class SupportPolicy:
     category: str
     title: str
     updated_at: str
+    effective_from: str
+    review_due_at: str
+    supersedes_policy_ids: tuple[str, ...]
     priority: str
     sla_minutes: int
     owner: str
@@ -47,7 +51,8 @@ class SupportPolicy:
     def from_mapping(cls, value: dict[str, Any]) -> "SupportPolicy":
         required = {
             "policy_id", "category", "title", "updated_at", "priority", "sla_minutes",
-            "owner", "keywords", "escalation_keywords", "required_evidence", "resolution_steps",
+            "effective_from", "review_due_at", "supersedes_policy_ids", "owner", "keywords",
+            "escalation_keywords", "required_evidence", "resolution_steps",
         }
         missing = sorted(required.difference(value))
         if missing:
@@ -63,6 +68,11 @@ class SupportPolicy:
             category=str(value["category"]).strip(),
             title=str(value["title"]).strip(),
             updated_at=str(value["updated_at"]).strip(),
+            effective_from=str(value["effective_from"]).strip(),
+            review_due_at=str(value["review_due_at"]).strip(),
+            supersedes_policy_ids=_strings(
+                value["supersedes_policy_ids"], "supersedes_policy_ids", allow_empty=True
+            ),
             priority=priority,
             sla_minutes=sla_minutes,
             owner=str(value["owner"]).strip(),
@@ -73,6 +83,15 @@ class SupportPolicy:
         )
         if not all((policy.policy_id, policy.category, policy.title, policy.updated_at, policy.owner)):
             raise ValueError("Policy text fields must not be blank")
+        updated = _date(policy.updated_at, "updated_at")
+        effective = _date(policy.effective_from, "effective_from")
+        review_due = _date(policy.review_due_at, "review_due_at")
+        if updated > effective:
+            raise ValueError("updated_at must not be after effective_from")
+        if review_due < effective:
+            raise ValueError("review_due_at must not be before effective_from")
+        if policy.policy_id in policy.supersedes_policy_ids:
+            raise ValueError("a policy cannot supersede itself")
         return policy
 
 
@@ -90,9 +109,22 @@ def load_policies(path: Path) -> list[SupportPolicy]:
         raise ValueError("Policy file must contain a non-empty list")
     policies = [SupportPolicy.from_mapping(item) for item in payload]
     ids = [item.policy_id for item in policies]
-    categories = [item.category for item in policies]
-    if len(ids) != len(set(ids)) or len(categories) != len(set(categories)):
-        raise ValueError("Policy IDs and categories must be unique")
+    if len(ids) != len(set(ids)):
+        raise ValueError("Policy IDs must be unique")
+    by_id = {item.policy_id: item for item in policies}
+    for policy in policies:
+        unknown = sorted(set(policy.supersedes_policy_ids) - set(by_id))
+        if unknown:
+            raise ValueError(
+                f"Policy {policy.policy_id} supersedes unknown policies: {', '.join(unknown)}"
+            )
+        wrong_category = [
+            item for item in policy.supersedes_policy_ids
+            if by_id[item].category != policy.category
+        ]
+        if wrong_category:
+            raise ValueError("supersession links must remain within one policy category")
+    _validate_supersession_cycles(by_id)
     return policies
 
 
@@ -113,3 +145,27 @@ def _strings(value: Any, field: str, allow_empty: bool = False) -> tuple[str, ..
     if not cleaned and not allow_empty:
         raise ValueError(f"{field} must not be empty")
     return cleaned
+
+
+def _date(value: str, field: str) -> date:
+    try:
+        return date.fromisoformat(value)
+    except ValueError as exc:
+        raise ValueError(f"{field} must use YYYY-MM-DD") from exc
+
+
+def _validate_supersession_cycles(by_id: dict[str, SupportPolicy]) -> None:
+    def visit(policy_id: str, path: set[str], complete: set[str]) -> None:
+        if policy_id in path:
+            raise ValueError("policy supersession graph must not contain a cycle")
+        if policy_id in complete:
+            return
+        path.add(policy_id)
+        for previous_id in by_id[policy_id].supersedes_policy_ids:
+            visit(previous_id, path, complete)
+        path.remove(policy_id)
+        complete.add(policy_id)
+
+    complete: set[str] = set()
+    for policy_id in by_id:
+        visit(policy_id, set(), complete)
