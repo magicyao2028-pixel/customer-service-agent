@@ -65,6 +65,23 @@ class ReviewerFeedbackReplayTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "must define"):
                 load_feedback(path)
 
+    def test_rejects_boolean_alias_and_invalid_feedback_date(self):
+        payload = json.loads(FEEDBACK.read_text(encoding="utf-8"))
+        payload["records"][0]["expected"]["handoff"] = 1
+        with TemporaryDirectory() as directory:
+            path = Path(directory) / "feedback.json"
+            path.write_text(json.dumps(payload), encoding="utf-8")
+            with self.assertRaisesRegex(ValueError, "expected.handoff must be a boolean"):
+                load_feedback(path)
+
+        payload = json.loads(FEEDBACK.read_text(encoding="utf-8"))
+        payload["records"][0]["recorded_at"] = "2026-99-40"
+        with TemporaryDirectory() as directory:
+            path = Path(directory) / "feedback.json"
+            path.write_text(json.dumps(payload), encoding="utf-8")
+            with self.assertRaisesRegex(ValueError, "recorded_at must use YYYY-MM-DD"):
+                load_feedback(path)
+
     def test_writes_deterministic_replay_evidence(self):
         report = replay_feedback(POLICIES, FEEDBACK)
         with TemporaryDirectory() as directory:

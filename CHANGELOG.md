@@ -8,6 +8,7 @@
 - verified status, category, policy, handoff, privacy, reply approval and policy-block boundaries;
 - preserved a pending automation request without allowing feedback to mutate policy or behavior;
 - added two reproducible replay reports and seven regression tests.
+- tightened accepted-case type validation and ISO feedback-date validation after independent review.
 
 ## 0.3.0 - 2026-08-12
 

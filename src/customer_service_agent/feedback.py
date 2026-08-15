@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+from datetime import date
 from pathlib import Path
 from typing import Any
 
@@ -49,6 +50,10 @@ def load_feedback(path: Path) -> dict[str, Any]:
         recorded_at = str(raw.get("recorded_at", "")).strip()
         if not all((reviewer_alias, issue_type, rationale, recorded_at)):
             raise ValueError("Feedback reviewer, issue type, rationale and recorded_at must not be blank")
+        try:
+            date.fromisoformat(recorded_at)
+        except ValueError as exc:
+            raise ValueError("Feedback recorded_at must use YYYY-MM-DD") from exc
 
         ticket = raw.get("ticket")
         expected = raw.get("expected")
@@ -58,6 +63,8 @@ def load_feedback(path: Path) -> dict[str, Any]:
             not isinstance(expected, dict) or set(expected) != EXPECTED_FIELDS
         ):
             raise ValueError("Accepted feedback must define status, category, handoff and policy_id")
+        if disposition == "accepted_for_replay":
+            _validate_expected(expected)
 
         sanitized_ticket = None
         redactions: list[str] = []
@@ -187,3 +194,15 @@ def _blocked_policy_guard(output: dict[str, Any]) -> bool:
     if output["status"] not in {"no_policy", "policy_conflict", "policy_stale"}:
         return True
     return output["policy_citation"] is None and output["human_handoff"]["required"] is True
+
+
+def _validate_expected(expected: dict[str, Any]) -> None:
+    if not isinstance(expected["status"], str) or not expected["status"].strip():
+        raise ValueError("expected.status must be a non-empty string")
+    if not isinstance(expected["category"], str) or not expected["category"].strip():
+        raise ValueError("expected.category must be a non-empty string")
+    if not isinstance(expected["handoff"], bool):
+        raise ValueError("expected.handoff must be a boolean")
+    policy_id = expected["policy_id"]
+    if policy_id is not None and (not isinstance(policy_id, str) or not policy_id.strip()):
+        raise ValueError("expected.policy_id must be null or a non-empty string")
