@@ -36,7 +36,7 @@ Small support teams receive order, delivery, refund and safety questions across 
 | Agent workflow | Explicit state transitions, bounded clarification, policy retrieval and handoff |
 | Grounded customer service | Effective dates, review deadlines, supersession chains, exact citations and response ownership |
 | Safety and privacy | Sensitive-data redaction, critical escalation and no-policy abstention |
-| Engineering evidence | Typed Python package, four CLIs, 27 tests, deterministic 5/5 fixture and 2/2 feedback replay |
+| Engineering evidence | Typed Python package, four CLIs, 28 tests, deterministic 5/5 fixture and 2/2 feedback replay |
 | Product experience | Zero-cost [browser prototype](site/) showing triage and handoff states |
 | Feedback loop | Provenance, disposition, sanitized case fingerprint, replay checks and excluded pending feedback |
 
