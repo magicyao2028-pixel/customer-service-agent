@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.4.0 - 2026-08-15
+
+- added structured reviewer feedback with provenance, attribution alias, disposition and rationale validation;
+- redacted accepted feedback tickets before normalized replay and added deterministic sanitized-ticket fingerprints;
+- replayed only explicitly accepted records under a fixed policy-analysis date;
+- verified status, category, policy, handoff, privacy, reply approval and policy-block boundaries;
+- preserved a pending automation request without allowing feedback to mutate policy or behavior;
+- added two reproducible replay reports and seven regression tests.
+
 ## 0.3.0 - 2026-08-12
 
 - added effective, review-due and supersession metadata to validated policies;

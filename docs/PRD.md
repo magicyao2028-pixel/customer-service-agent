@@ -5,7 +5,7 @@
 | Field | Value |
 | --- | --- |
 | Product | Customer Service Agent |
-| Version | 0.3 |
+| Version | 0.4 |
 | Status | Product-validation MVP |
 | Primary user | Support lead or customer-operations specialist in a small or medium-sized business |
 | Public data policy | Synthetic tickets and policies only |
@@ -18,7 +18,7 @@ Support requests arrive through several channels with inconsistent classificatio
 
 If each ticket passes through one transparent privacy, policy and handoff workflow, a support lead can review more consistent case packets and identify critical exceptions earlier.
 
-This hypothesis has not been validated with real support users. v0.3 verifies workflow behavior only.
+This hypothesis has not been validated with real support users. v0.4 verifies deterministic workflow and governed synthetic-feedback replay only.
 
 ### v0.3 maintenance scope
 
@@ -26,6 +26,14 @@ This hypothesis has not been validated with real support users. v0.3 verifies wo
 - select one current unsuperseded policy version on a reproducible analysis date;
 - block the workflow when categories tie, all relevant versions are stale or multiple versions remain current;
 - expose selected, candidate and excluded policy IDs for human review.
+
+### v0.4 maintenance scope
+
+- capture feedback with provenance, reviewer alias, disposition and rationale;
+- redact accepted feedback tickets before replay and avoid retaining original text in the normalized record;
+- replay only explicitly accepted cases under a fixed analysis date;
+- verify status, category, policy, handoff, reply approval, privacy and policy-block boundaries;
+- retain pending and rejected suggestions without changing policy or Agent behavior.
 
 ## 4. v0.1 scope
 
@@ -66,7 +74,11 @@ This hypothesis has not been validated with real support users. v0.3 verifies wo
 | FR-11 | Resolve current policy | Must | A supported response cites one effective, in-review, unsuperseded policy. |
 | FR-12 | Block ambiguity | Must | Category ties, stale policies and unresolved versions abstain and require a support lead. |
 | FR-13 | Expose resolution evidence | Must | Output includes analysis date, candidate IDs and excluded-version reasons. |
+| FR-14 | Govern feedback | Must | Unknown provenance, duplicate IDs and incomplete accepted records fail validation. |
+| FR-15 | Replay safely | Must | Only accepted feedback executes after redaction under the current reviewed policy set. |
+| FR-16 | Preserve guardrails | Must | Replay cannot bypass policy blocking, human handoff or reply approval. |
+| FR-17 | Separate evidence from change | Must | Pending or rejected feedback remains excluded and cannot mutate policy automatically. |
 
 ## 6. Release gate
 
-The public v0.3 must pass all deterministic tests, preserve privacy, abstention, bounded clarification and urgent-routing boundaries, use only synthetic data and clearly state that no reply is sent automatically.
+The public v0.4 must pass all deterministic tests and both accepted replay cases, preserve privacy, abstention, bounded clarification, urgent routing, policy blocking and human approval, use only synthetic data and clearly state that feedback does not change policy automatically.

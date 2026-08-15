@@ -1,0 +1,57 @@
+{
+  "batch_id": "SYNTHETIC-REVIEW-BATCH-001",
+  "analysis_date": "2026-08-12",
+  "records": [
+    {
+      "feedback_id": "FB-SAFE-001",
+      "provenance": "synthetic_public_fixture",
+      "reviewer_alias": "synthetic-support-lead",
+      "recorded_at": "2026-08-13",
+      "issue_type": "urgent_routing",
+      "disposition": "accepted_for_replay",
+      "rationale": "A reported illness must bypass routine handling and reach the duty manager.",
+      "ticket": {
+        "ticket_id": "REPLAY-SAFE-001",
+        "channel": "email",
+        "customer_message": "Contact reviewer@example.test. I became sick and this product may be unsafe.",
+        "order_id": "ORDER-R-001"
+      },
+      "expected": {
+        "status": "escalated",
+        "category": "safety_concern",
+        "handoff": true,
+        "policy_id": "POL-SAFE-003"
+      }
+    },
+    {
+      "feedback_id": "FB-CONFLICT-002",
+      "provenance": "synthetic_public_fixture",
+      "reviewer_alias": "synthetic-policy-owner",
+      "recorded_at": "2026-08-13",
+      "issue_type": "policy_conflict",
+      "disposition": "accepted_for_replay",
+      "rationale": "A ticket matching damaged-product and refund categories must stop for human policy selection.",
+      "ticket": {
+        "ticket_id": "REPLAY-CONFLICT-002",
+        "channel": "chat",
+        "customer_message": "The parcel is damaged and I also need a refund.",
+        "order_id": "ORDER-R-002"
+      },
+      "expected": {
+        "status": "policy_conflict",
+        "category": "multiple",
+        "handoff": true,
+        "policy_id": null
+      }
+    },
+    {
+      "feedback_id": "FB-AUTOMATION-003",
+      "provenance": "synthetic_public_fixture",
+      "reviewer_alias": "synthetic-operations-reviewer",
+      "recorded_at": "2026-08-13",
+      "issue_type": "automation_request",
+      "disposition": "pending",
+      "rationale": "A suggestion to auto-approve refunds requires policy-owner review and cannot change behavior directly."
+    }
+  ]
+}

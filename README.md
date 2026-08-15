@@ -25,6 +25,8 @@ Small support teams receive order, delivery, refund and safety questions across 
 - escalates critical or explicitly triggered cases to a human;
 - abstains when no policy supports a response;
 - creates a response draft that still requires human approval.
+- captures attributable, provenance-labeled reviewer feedback without retaining raw sensitive text;
+- replays only explicitly accepted feedback as deterministic cases while preserving policy, privacy and handoff gates.
 
 ## What this repository demonstrates
 
@@ -34,8 +36,9 @@ Small support teams receive order, delivery, refund and safety questions across 
 | Agent workflow | Explicit state transitions, bounded clarification, policy retrieval and handoff |
 | Grounded customer service | Effective dates, review deadlines, supersession chains, exact citations and response ownership |
 | Safety and privacy | Sensitive-data redaction, critical escalation and no-policy abstention |
-| Engineering evidence | Typed Python package, two CLIs, 20 tests and deterministic 5/5 fixture |
+| Engineering evidence | Typed Python package, four CLIs, 27 tests, deterministic 5/5 fixture and 2/2 feedback replay |
 | Product experience | Zero-cost [browser prototype](site/) showing triage and handoff states |
+| Feedback loop | Provenance, disposition, sanitized case fingerprint, replay checks and excluded pending feedback |
 
 ## Core workflow
 
@@ -64,6 +67,9 @@ python -m pip install -e .
 service-agent data/sample_ticket.json --analysis-date 2026-08-12 --output output/triage_result.json
 service-conversation data/sample_conversation.json --analysis-date 2026-08-12 --output output/conversation_result.json
 service-agent-eval
+service-feedback-replay data/support_policies.json data/reviewer_feedback.json \
+  --json-output examples/feedback_replay_report.json \
+  --markdown-output examples/feedback_replay_report.md
 python -m unittest discover -s tests -v
 ```
 
@@ -88,6 +94,8 @@ The synthetic damaged-product ticket resolves to `POL-RET-001`, while the prior 
 The bounded conversation example starts without an order ID, enters `needs_clarification`, receives the structured ID on turn one and then moves to `triaged`. See [`examples/sample_conversation_result.json`](examples/sample_conversation_result.json).
 
 The public fixture covers damaged products, delivery delays, safety incidents, refunds and unsupported requests. Its 5/5 result is regression evidence for those engineered cases, not a production accuracy estimate. See the [evaluation report](examples/evaluation_report.md).
+
+The [reviewer-feedback fixture](data/reviewer_feedback.json) contains two explicitly accepted synthetic cases and one pending automation suggestion. The accepted cases replay urgent routing and policy-conflict blocking; the pending suggestion is recorded but cannot change policy or behavior. The [replay report](examples/feedback_replay_report.md) shows 2/2 checks passing, an email redaction, human-approval checks and a deterministic sanitized-ticket fingerprint. It is workflow evidence, not real customer feedback.
 
 ## Honest boundaries
 
@@ -114,7 +122,7 @@ The public fixture covers damaged products, delivery delays, safety incidents, r
 - v0.1: grounded triage, redaction, policy citations, escalation, abstention and static demo;
 - v0.2: explicit multi-turn conversation state and a two-turn clarification limit;
 - v0.3: policy-conflict, freshness and supersession handling;
-- v0.4: feedback replay and service-quality evaluation;
+- v0.4: governed reviewer-feedback capture and deterministic replay (current);
 - v0.5: optional local/model adapter behind the deterministic safety boundary;
 - v1.0: controlled private pilot with authenticated support users.
 

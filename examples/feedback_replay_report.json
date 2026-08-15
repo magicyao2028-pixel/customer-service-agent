@@ -1,0 +1,95 @@
+{
+  "replay_version": "0.4",
+  "batch_id": "SYNTHETIC-REVIEW-BATCH-001",
+  "analysis_date": "2026-08-12",
+  "method": "deterministic replay of explicitly accepted reviewer feedback; no model judge",
+  "summary": {
+    "total_feedback": 3,
+    "replayed": 2,
+    "passed": 2,
+    "failed": 0,
+    "excluded": 1
+  },
+  "replayed": [
+    {
+      "feedback_id": "FB-SAFE-001",
+      "provenance": "synthetic_public_fixture",
+      "reviewer_alias": "synthetic-support-lead",
+      "issue_type": "urgent_routing",
+      "sanitized_ticket_fingerprint": "65af60a84e76a56b0e9c8930375aac1fb7038b52e4933beafad77a0d5b97e905",
+      "privacy": {
+        "redactions_applied": [
+          "email"
+        ],
+        "original_message_retained": false
+      },
+      "expected": {
+        "status": "escalated",
+        "category": "safety_concern",
+        "handoff": true,
+        "policy_id": "POL-SAFE-003"
+      },
+      "actual": {
+        "status": "escalated",
+        "category": "safety_concern",
+        "handoff": true,
+        "policy_id": "POL-SAFE-003"
+      },
+      "checks": {
+        "blocked_policy_requires_handoff": true,
+        "category": true,
+        "customer_reply_requires_approval": true,
+        "handoff": true,
+        "original_message_not_retained": true,
+        "policy_id": true,
+        "status": true
+      },
+      "passed": true
+    },
+    {
+      "feedback_id": "FB-CONFLICT-002",
+      "provenance": "synthetic_public_fixture",
+      "reviewer_alias": "synthetic-policy-owner",
+      "issue_type": "policy_conflict",
+      "sanitized_ticket_fingerprint": "4e4f3b139371eeb0bf27e67053b68165e4583d62034d6816a6050d5e34dd43bf",
+      "privacy": {
+        "redactions_applied": [],
+        "original_message_retained": false
+      },
+      "expected": {
+        "status": "policy_conflict",
+        "category": "multiple",
+        "handoff": true,
+        "policy_id": null
+      },
+      "actual": {
+        "status": "policy_conflict",
+        "category": "multiple",
+        "handoff": true,
+        "policy_id": null
+      },
+      "checks": {
+        "blocked_policy_requires_handoff": true,
+        "category": true,
+        "customer_reply_requires_approval": true,
+        "handoff": true,
+        "original_message_not_retained": true,
+        "policy_id": true,
+        "status": true
+      },
+      "passed": true
+    }
+  ],
+  "excluded": [
+    {
+      "feedback_id": "FB-AUTOMATION-003",
+      "disposition": "pending",
+      "reason": "feedback does not alter policy or enter replay until explicitly accepted"
+    }
+  ],
+  "governance": [
+    "Feedback is evidence for review and replay; it does not edit policy or production behavior automatically.",
+    "Only accepted_for_replay records execute; pending and rejected records remain excluded.",
+    "Public records are synthetic and do not represent real customer feedback."
+  ]
+}
