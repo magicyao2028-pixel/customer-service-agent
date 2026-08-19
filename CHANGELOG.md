@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.5.0 - 2026-08-20
+
+- added phone and access-token redaction while requiring Luhn validation before card classification;
+- added a seven-case synthetic redaction-quality fixture whose reports retain no source messages or sensitive values;
+- added a clean trial command, seven-claim evidence index and exact external-component screening;
+- linked a clearly synthetic privacy requirement to implementation and deterministic regression evidence;
+- retained explicit selected-pattern, non-DLP and human-review boundaries.
+
 ## 0.4.0 - 2026-08-15
 
 - added structured reviewer feedback with provenance, attribution alias, disposition and rationale validation;

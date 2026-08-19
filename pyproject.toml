@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "customer-service-agent"
-version = "0.4.0"
+version = "0.5.0"
 description = "Offline customer-service triage with governed reviewer feedback and deterministic replay."
 readme = "README.md"
 requires-python = ">=3.10"
@@ -17,6 +17,8 @@ service-agent = "customer_service_agent.cli:main"
 service-agent-eval = "customer_service_agent.evaluation_cli:main"
 service-conversation = "customer_service_agent.conversation_cli:main"
 service-feedback-replay = "customer_service_agent.feedback_cli:main"
+service-redaction-eval = "customer_service_agent.privacy_evaluation_cli:main"
+service-agent-trial = "customer_service_agent.trial_cli:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]

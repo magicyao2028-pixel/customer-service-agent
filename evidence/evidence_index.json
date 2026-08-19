@@ -1,0 +1,16 @@
+{
+  "schema_version": "1.0", "project": "customer-service-agent", "claims": [
+    {"claim_id": "SERVICE-BUSINESS-001", "statement": "The workflow supports governed support triage and human handoff.", "artifacts": [{"kind": "requirements", "path": "docs/PRD.md"}, {"kind": "workflow", "path": "docs/BUSINESS_FLOW.md"}]},
+    {"claim_id": "SERVICE-RUN-001", "statement": "A clean synthetic trial runs locally without paid APIs or platform writes.", "artifacts": [{"kind": "implementation", "path": "src/customer_service_agent/trial.py"}, {"kind": "guide", "path": "docs/TRIAL_GUIDE.md"}]},
+    {"claim_id": "SERVICE-PRIVACY-001", "statement": "Seven synthetic cases exercise five supported redaction types and one safe identifier.", "artifacts": [{"kind": "fixture", "path": "data/redaction_quality_cases.json"}, {"kind": "tests", "path": "tests/test_privacy_evaluation.py"}]},
+    {"claim_id": "SERVICE-FAIL-001", "statement": "Unsupported or unresolved policy cases abstain and require human handoff.", "artifacts": [{"kind": "tests", "path": "tests/test_agent.py"}]},
+    {"claim_id": "SERVICE-OSS-001", "statement": "Two privacy components were screened without forcing an unnecessary dependency.", "artifacts": [{"kind": "screening", "path": "evidence/external_intake.json"}]},
+    {"claim_id": "SERVICE-FEEDBACK-001", "statement": "A synthetic privacy requirement links implementation to regression evidence.", "artifacts": [{"kind": "feedback", "path": "evidence/feedback_case.json"}]},
+    {"claim_id": "SERVICE-LIMIT-001", "statement": "Exact-pattern, synthetic-data and human-authority limitations remain explicit.", "artifacts": [{"kind": "security", "path": "docs/SECURITY.md"}, {"kind": "handoff", "path": "HANDOFF.md"}]}
+  ],
+  "boundaries": [
+    "Selected exact patterns only; this is not full DLP, identity verification or a production privacy claim.",
+    "All tickets, policies and reviewer records are synthetic; no real customer adoption is claimed.",
+    "A real pilot requires authenticated reviewers, approved retention, ticketing integration, privacy review and monitored false-positive/false-negative handling."
+  ]
+}

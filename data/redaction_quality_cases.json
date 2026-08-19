@@ -1,0 +1,12 @@
+{
+  "fixture_id": "SYNTH-REDACTION-001",
+  "cases": [
+    {"case_id": "RED-EMAIL-001", "message": "Reply to reviewer@example.test", "expected_types": ["email"], "sensitive_values": ["reviewer@example.test"]},
+    {"case_id": "RED-CARD-002", "message": "The test card is 4111 1111 1111 1111", "expected_types": ["payment_card"], "sensitive_values": ["4111 1111 1111 1111"]},
+    {"case_id": "RED-PASSWORD-003", "message": "password: demo-secret-42", "expected_types": ["password"], "sensitive_values": ["demo-secret-42"]},
+    {"case_id": "RED-PHONE-004", "message": "Call +86 138 0013 8000", "expected_types": ["phone"], "sensitive_values": ["+86 138 0013 8000"]},
+    {"case_id": "RED-TOKEN-005", "message": "Bearer demo_token_12345", "expected_types": ["access_token"], "sensitive_values": ["demo_token_12345"]},
+    {"case_id": "RED-COMBINED-006", "message": "Email a@demo.test or call 0731 8888 6666", "expected_types": ["email", "phone"], "sensitive_values": ["a@demo.test", "0731 8888 6666"]},
+    {"case_id": "RED-SAFE-007", "message": "Order ORDER-2026-004 needs a delivery update", "expected_types": [], "sensitive_values": []}
+  ]
+}

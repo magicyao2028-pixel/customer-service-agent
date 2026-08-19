@@ -27,6 +27,8 @@ Small support teams receive order, delivery, refund and safety questions across 
 - creates a response draft that still requires human approval.
 - captures attributable, provenance-labeled reviewer feedback without retaining raw sensitive text;
 - replays only explicitly accepted feedback as deterministic cases while preserving policy, privacy and handoff gates.
+- evaluates five supported redaction types with a seven-case synthetic fixture whose report never stores source messages or sensitive values;
+- exposes one clean trial command and a machine-readable evidence index for reviewer verification.
 
 ## What this repository demonstrates
 
@@ -36,9 +38,10 @@ Small support teams receive order, delivery, refund and safety questions across 
 | Agent workflow | Explicit state transitions, bounded clarification, policy retrieval and handoff |
 | Grounded customer service | Effective dates, review deadlines, supersession chains, exact citations and response ownership |
 | Safety and privacy | Sensitive-data redaction, critical escalation and no-policy abstention |
-| Engineering evidence | Typed Python package, four CLIs, 28 tests, deterministic 5/5 fixture and 2/2 feedback replay |
+| Engineering evidence | Typed Python package, deterministic 5/5 behavior fixture, 2/2 feedback replay and 7/7 privacy fixture |
 | Product experience | Zero-cost [browser prototype](site/) showing triage and handoff states |
 | Feedback loop | Provenance, disposition, sanitized case fingerprint, replay checks and excluded pending feedback |
+| Trial readiness | [15–20 minute offline trial](docs/TRIAL_GUIDE.md), seven evidence claims and governed external screening |
 
 ## Core workflow
 
@@ -70,6 +73,8 @@ service-agent-eval
 service-feedback-replay data/support_policies.json data/reviewer_feedback.json \
   --json-output examples/feedback_replay_report.json \
   --markdown-output examples/feedback_replay_report.md
+service-redaction-eval
+service-agent-trial
 python -m unittest discover -s tests -v
 ```
 
@@ -97,6 +102,8 @@ The public fixture covers damaged products, delivery delays, safety incidents, r
 
 The [reviewer-feedback fixture](data/reviewer_feedback.json) contains two explicitly accepted synthetic cases and one pending automation suggestion. The accepted cases replay urgent routing and policy-conflict blocking; the pending suggestion is recorded but cannot change policy or behavior. The [replay report](examples/feedback_replay_report.md) shows 2/2 checks passing, an email redaction, human-approval checks and a deterministic sanitized-ticket fingerprint. It is workflow evidence, not real customer feedback.
 
+The [redaction-quality fixture](data/redaction_quality_cases.json) covers email, Luhn-valid payment card, password, phone and access-token patterns plus a safe order identifier. Its report stores only case IDs and detection labels. This demonstrates exact regression behavior, not real-world precision, recall or full DLP coverage.
+
 ## Honest boundaries
 
 - English keyword matching is not semantic understanding.
@@ -114,6 +121,7 @@ The [reviewer-feedback fixture](data/reviewer_feedback.json) contains two explic
 - [Evaluation plan](docs/EVALUATION.md)
 - [Security and governance](docs/SECURITY.md)
 - [Maintenance plan](docs/MAINTENANCE_PLAN.md)
+- [Trial guide](docs/TRIAL_GUIDE.md)
 - [Current handoff](HANDOFF.md)
 - [Changelog](CHANGELOG.md)
 
@@ -122,8 +130,9 @@ The [reviewer-feedback fixture](data/reviewer_feedback.json) contains two explic
 - v0.1: grounded triage, redaction, policy citations, escalation, abstention and static demo;
 - v0.2: explicit multi-turn conversation state and a two-turn clarification limit;
 - v0.3: policy-conflict, freshness and supersession handling;
-- v0.4: governed reviewer-feedback capture and deterministic replay (current);
-- v0.5: optional local/model adapter behind the deterministic safety boundary;
+- v0.4: governed reviewer-feedback capture and deterministic replay;
+- v0.5: redaction-quality evaluation and trial-readiness evidence (current);
+- v0.6: optional local/model adapter behind the deterministic safety boundary;
 - v1.0: controlled private pilot with authenticated support users.
 
 ## License

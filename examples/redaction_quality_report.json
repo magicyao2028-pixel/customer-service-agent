@@ -1,0 +1,97 @@
+{
+  "evaluation_version": "0.5",
+  "source_data": "synthetic",
+  "summary": {
+    "total": 7,
+    "passed": 7,
+    "failed": 0,
+    "supported_detection_types": [
+      "access_token",
+      "email",
+      "password",
+      "payment_card",
+      "phone"
+    ]
+  },
+  "cases": [
+    {
+      "case_id": "RED-EMAIL-001",
+      "expected_types": [
+        "email"
+      ],
+      "detected_types": [
+        "email"
+      ],
+      "original_sensitive_values_retained": false,
+      "passed": true
+    },
+    {
+      "case_id": "RED-CARD-002",
+      "expected_types": [
+        "payment_card"
+      ],
+      "detected_types": [
+        "payment_card"
+      ],
+      "original_sensitive_values_retained": false,
+      "passed": true
+    },
+    {
+      "case_id": "RED-PASSWORD-003",
+      "expected_types": [
+        "password"
+      ],
+      "detected_types": [
+        "password"
+      ],
+      "original_sensitive_values_retained": false,
+      "passed": true
+    },
+    {
+      "case_id": "RED-PHONE-004",
+      "expected_types": [
+        "phone"
+      ],
+      "detected_types": [
+        "phone"
+      ],
+      "original_sensitive_values_retained": false,
+      "passed": true
+    },
+    {
+      "case_id": "RED-TOKEN-005",
+      "expected_types": [
+        "access_token"
+      ],
+      "detected_types": [
+        "access_token"
+      ],
+      "original_sensitive_values_retained": false,
+      "passed": true
+    },
+    {
+      "case_id": "RED-COMBINED-006",
+      "expected_types": [
+        "email",
+        "phone"
+      ],
+      "detected_types": [
+        "email",
+        "phone"
+      ],
+      "original_sensitive_values_retained": false,
+      "passed": true
+    },
+    {
+      "case_id": "RED-SAFE-007",
+      "expected_types": [],
+      "detected_types": [],
+      "original_sensitive_values_retained": false,
+      "passed": true
+    }
+  ],
+  "boundaries": [
+    "Reports contain case IDs and detection labels, never original message text or sensitive values.",
+    "This exact-pattern fixture is regression evidence, not recall, precision or full DLP coverage."
+  ]
+}

@@ -1,0 +1,7 @@
+{
+  "schema_version": "1.0", "feedback_id": "FB-PRIVACY-SYN-001", "source_type": "synthetic", "recorded_on": "2026-08-20", "classification": "safety", "decision": "accepted",
+  "summary": "Phone numbers and bearer tokens in support text must be removed before reports or downstream workflow output.",
+  "acceptance_test": "tests/test_privacy_evaluation.py", "implementation": "src/customer_service_agent/privacy.py",
+  "release_result": "Phone and access-token patterns are redacted and the quality report retains only case IDs and detection labels.",
+  "adoption_claim": "Synthetic requirement only; not real customer or reviewer feedback."
+}

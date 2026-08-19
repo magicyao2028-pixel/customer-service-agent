@@ -1,0 +1,6 @@
+{
+  "schema_version": "1.0", "reviewed_on": "2026-08-20", "candidates": [
+    {"repository": "https://github.com/data-privacy-stack/presidio", "version": "2.2.364", "commit": "779dbd286d5ef4d1fbe2514275fb1bce358f2417", "license": "MIT", "decision": "rejected", "code_adopted": false, "reason": "Presidio adds NLP engines, recognizer configuration and deployment scope that is disproportionate to a dependency-free exact-pattern public trial."},
+    {"repository": "https://github.com/LeapBeyond/scrubadub", "version": "v2.0.1", "commit": "53772cbef417da290d25c95373031f786ab3b5c6", "license": "Apache-2.0", "decision": "rejected", "code_adopted": false, "reason": "The release is compatible but older and would add a runtime dependency without improving the bounded phone/token regression evidence required in this round."}
+  ]
+}
