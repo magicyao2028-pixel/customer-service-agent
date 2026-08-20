@@ -21,6 +21,9 @@ def redact_sensitive_text(value: str) -> tuple[str, list[str]]:
     if EMAIL.search(redacted):
         detected.append("email")
         redacted = EMAIL.sub("[REDACTED_EMAIL]", redacted)
+    if ACCESS_TOKEN.search(redacted):
+        detected.append("access_token")
+        redacted = ACCESS_TOKEN.sub("[REDACTED_ACCESS_TOKEN]", redacted)
     card_found = False
 
     def replace_card(match: re.Match[str]) -> str:
@@ -40,9 +43,6 @@ def redact_sensitive_text(value: str) -> tuple[str, list[str]]:
     if PHONE.search(redacted):
         detected.append("phone")
         redacted = PHONE.sub("[REDACTED_PHONE]", redacted)
-    if ACCESS_TOKEN.search(redacted):
-        detected.append("access_token")
-        redacted = ACCESS_TOKEN.sub("[REDACTED_ACCESS_TOKEN]", redacted)
     return redacted, detected
 
 

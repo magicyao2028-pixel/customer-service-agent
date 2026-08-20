@@ -19,7 +19,7 @@ class PrivacyEvaluationTests(unittest.TestCase):
 
     def test_phone_and_access_token_are_redacted(self):
         text, detected = redact_sensitive_text("Call +86 138 0013 8000; bearer demo_token_12345")
-        self.assertEqual(detected, ["phone", "access_token"])
+        self.assertEqual(detected, ["access_token", "phone"])
         self.assertNotIn("138 0013 8000", text)
         self.assertNotIn("demo_token_12345", text)
 
@@ -27,6 +27,11 @@ class PrivacyEvaluationTests(unittest.TestCase):
         text, detected = redact_sensitive_text("Order ORDER-2026-004 needs a delivery update")
         self.assertEqual(text, "Order ORDER-2026-004 needs a delivery update")
         self.assertEqual(detected, [])
+
+    def test_numeric_bearer_value_is_classified_as_access_token(self):
+        text, detected = redact_sensitive_text("Bearer 123456789012")
+        self.assertEqual(text, "[REDACTED_ACCESS_TOKEN]")
+        self.assertEqual(detected, ["access_token"])
 
     def test_report_is_deterministic_and_contains_no_raw_messages(self):
         report = evaluate_redaction_cases(FIXTURE)
