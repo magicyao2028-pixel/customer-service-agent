@@ -15,13 +15,14 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--policies", type=Path, default=Path("data/support_policies.json"))
     parser.add_argument("--output", type=Path)
     parser.add_argument("--analysis-date", default=date.today().isoformat())
+    parser.add_argument("--classification-mode", choices=("keyword", "local_vector"), default="keyword")
     return parser.parse_args()
 
 
 def main() -> None:
     args = parse_args()
     result = CustomerServiceAgent(
-        load_policies(args.policies), analysis_date=args.analysis_date
+        load_policies(args.policies), analysis_date=args.analysis_date, classification_mode=args.classification_mode
     ).handle(load_ticket(args.ticket))
     rendered = json.dumps(result, ensure_ascii=False, indent=2)
     if args.output:

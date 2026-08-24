@@ -91,11 +91,16 @@ def run_trial(root: Path) -> dict[str, Any]:
     evidence = validate_evidence_index(root, load_json_object(root / "evidence/evidence_index.json"))
     external = validate_external_intake(load_json_object(root / "evidence/external_intake.json"))
     feedback = validate_feedback(root, load_json_object(root / "evidence/feedback_case.json"))
-    core_passed = privacy["summary"]["failed"] == 0 and behavior["summary"]["passed_cases"] == 5 and feedback_replay["summary"]["passed"] == 2
+    core_passed = (
+        privacy["summary"]["failed"] == 0
+        and behavior["summary"]["passed_cases"] == 5
+        and behavior["mode_comparison"]["local_vector"]["passed_cases"] == 5
+        and feedback_replay["summary"]["passed"] == 2
+    )
     return {
         "schema_version": "1.0", "trial_id": "TRIAL-SERVICE-001", "source_data": "synthetic",
         "overall_passed": core_passed and feedback["passed"] and all(item["passed"] for item in evidence + external),
-        "core_flow": {"passed": core_passed, "redaction_cases": privacy["summary"], "behavior_cases_passed": behavior["summary"]["passed_cases"], "feedback_replay_passed": feedback_replay["summary"]["passed"], "external_actions_executed": 0},
+        "core_flow": {"passed": core_passed, "redaction_cases": privacy["summary"], "behavior_cases_passed": behavior["summary"]["passed_cases"], "local_vector_behavior_cases_passed": behavior["mode_comparison"]["local_vector"]["passed_cases"], "feedback_replay_passed": feedback_replay["summary"]["passed"], "external_actions_executed": 0},
         "feedback_regression": feedback, "external_intake": external, "evidence_index": evidence,
         "boundaries": load_json_object(root / "evidence/evidence_index.json")["boundaries"],
     }
@@ -111,6 +116,7 @@ def write_trial_report(root: Path, json_path: Path, markdown_path: Path) -> dict
         f"- Overall: **{'PASS' if report['overall_passed'] else 'FAIL'}**",
         f"- Redaction cases: {report['core_flow']['redaction_cases']['passed']}/{report['core_flow']['redaction_cases']['total']}",
         f"- Behavior cases: {report['core_flow']['behavior_cases_passed']}/5",
+        f"- Local-vector behavior cases: {report['core_flow']['local_vector_behavior_cases_passed']}/5",
         f"- Feedback replay: {report['core_flow']['feedback_replay_passed']}/2", "", "## Pilot boundary", "",
         *[f"- {item}" for item in report["boundaries"]], "",
     ]), encoding="utf-8")

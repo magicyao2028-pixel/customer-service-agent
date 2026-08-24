@@ -1,6 +1,7 @@
 # Customer Service Agent Evaluation
 
 - Method: synthetic deterministic behavior checks; no production accuracy claim
+- Classification mode: `keyword`
 - Result: **5/5 cases passed**
 
 | Case | Result | Status | Category | Handoff | Policy |
@@ -10,6 +11,13 @@
 | CASE-SAFETY-003 | PASS | escalated | safety_concern | True | POL-SAFE-003 |
 | CASE-REFUND-004 | PASS | triaged | refund_request | False | POL-REF-004 |
 | CASE-UNKNOWN-005 | PASS | no_policy | unknown | True | none |
+
+## Classification-mode comparison
+
+| Mode | Passed | Pass rate |
+| --- | --- | --- |
+| `keyword` | 5/5 | 100% |
+| `local_vector` | 5/5 | 100% |
 
 ## Interpretation boundary
 

@@ -27,8 +27,9 @@ Small support teams receive order, delivery, refund and safety questions across 
 - creates a response draft that still requires human approval.
 - captures attributable, provenance-labeled reviewer feedback without retaining raw sensitive text;
 - replays only explicitly accepted feedback as deterministic cases while preserving policy, privacy and handoff gates.
+- optionally produces a dependency-free local vector classification hint for side-by-side review; the keyword baseline remains authoritative.
 - evaluates five supported redaction types with a seven-case synthetic fixture whose report never stores source messages or sensitive values;
-- exposes one clean trial command and a machine-readable evidence index for reviewer verification.
+- exposes one clean trial command and an eight-claim machine-readable evidence index for reviewer verification.
 
 ## What this repository demonstrates
 
@@ -38,7 +39,7 @@ Small support teams receive order, delivery, refund and safety questions across 
 | Agent workflow | Explicit state transitions, bounded clarification, policy retrieval and handoff |
 | Grounded customer service | Effective dates, review deadlines, supersession chains, exact citations and response ownership |
 | Safety and privacy | Sensitive-data redaction, critical escalation and no-policy abstention |
-| Engineering evidence | Typed Python package, deterministic 5/5 behavior fixture, 2/2 feedback replay and 7/7 privacy fixture |
+| Engineering evidence | Typed Python package, deterministic 5/5 behavior fixture in both classification modes, 2/2 feedback replay and 7/7 privacy fixture |
 | Product experience | Zero-cost [browser prototype](site/) showing triage and handoff states |
 | Feedback loop | Provenance, disposition, sanitized case fingerprint, replay checks and excluded pending feedback |
 | Trial readiness | [15–20 minute offline trial](docs/TRIAL_GUIDE.md), seven evidence claims and governed external screening |
@@ -70,6 +71,7 @@ python -m pip install -e .
 service-agent data/sample_ticket.json --analysis-date 2026-08-12 --output output/triage_result.json
 service-conversation data/sample_conversation.json --analysis-date 2026-08-12 --output output/conversation_result.json
 service-agent-eval
+service-agent-eval --classification-mode local_vector
 service-feedback-replay data/support_policies.json data/reviewer_feedback.json \
   --json-output examples/feedback_replay_report.json \
   --markdown-output examples/feedback_replay_report.md
@@ -104,9 +106,11 @@ The [reviewer-feedback fixture](data/reviewer_feedback.json) contains two explic
 
 The [redaction-quality fixture](data/redaction_quality_cases.json) covers email, Luhn-valid payment card, password, phone and access-token patterns plus a safe order identifier. Its report stores only case IDs and detection labels. This demonstrates exact regression behavior, not real-world precision, recall or full DLP coverage.
 
+The optional `local_vector` mode is a deterministic, dependency-free character/token n-gram hint intended for review and comparison. It is not a pretrained model, does not call a remote provider, and cannot override privacy redaction, policy freshness, abstention or human handoff. The evaluation report compares it with the keyword baseline on the same five synthetic cases.
+
 ## Honest boundaries
 
-- English keyword matching is not semantic understanding.
+- English keyword matching is not semantic understanding; the optional local vector mode is also only a bounded hint, not a semantic model.
 - Five synthetic policy records across four categories do not represent a complete service knowledge base.
 - Response drafts are not sent automatically and require human approval.
 - Redaction covers selected common patterns, not every form of personal information.
@@ -131,8 +135,8 @@ The [redaction-quality fixture](data/redaction_quality_cases.json) covers email,
 - v0.2: explicit multi-turn conversation state and a two-turn clarification limit;
 - v0.3: policy-conflict, freshness and supersession handling;
 - v0.4: governed reviewer-feedback capture and deterministic replay;
-- v0.5: redaction-quality evaluation and trial-readiness evidence (current);
-- v0.6: optional local/model adapter behind the deterministic safety boundary;
+- v0.5: redaction-quality evaluation and trial-readiness evidence;
+- v0.6: optional dependency-free local vector classification hint and side-by-side comparison behind the deterministic safety boundary (current);
 - v1.0: controlled private pilot with authenticated support users.
 
 ## License

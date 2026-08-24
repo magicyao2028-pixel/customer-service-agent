@@ -17,6 +17,7 @@ class CustomerServiceEvaluationTests(unittest.TestCase):
 
         self.assertEqual(report["summary"]["passed_cases"], 5)
         self.assertEqual(report["summary"]["pass_rate"], 1.0)
+        self.assertEqual(report["mode_comparison"]["local_vector"]["passed_cases"], 5)
 
     def test_writes_reproducible_reports(self):
         report = evaluate_cases(POLICIES, CASES)

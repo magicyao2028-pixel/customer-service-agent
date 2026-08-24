@@ -4,6 +4,7 @@ from dataclasses import dataclass, field
 from datetime import date
 from typing import Any, Iterable
 
+from .classification import LocalLanguageClassificationAdapter
 from .models import SupportPolicy, SupportTicket
 from .privacy import redact_sensitive_text
 from .policy_resolution import PolicyResolution, resolve_policy
@@ -20,7 +21,12 @@ class AgentTrace:
 class CustomerServiceAgent:
     """Runs deterministic support triage with cited policies and human handoff."""
 
-    def __init__(self, policies: Iterable[SupportPolicy], analysis_date: str | None = None) -> None:
+    def __init__(
+        self,
+        policies: Iterable[SupportPolicy],
+        analysis_date: str | None = None,
+        classification_mode: str = "keyword",
+    ) -> None:
         self.policies = list(policies)
         if not self.policies:
             raise ValueError("At least one support policy is required")
@@ -29,6 +35,10 @@ class CustomerServiceAgent:
             date.fromisoformat(self.analysis_date)
         except ValueError as exc:
             raise ValueError("analysis_date must use YYYY-MM-DD") from exc
+        if classification_mode not in {"keyword", "local_vector"}:
+            raise ValueError("classification_mode must be keyword or local_vector")
+        self.classification_mode = classification_mode
+        self._local_classifier = LocalLanguageClassificationAdapter(self.policies)
 
     def handle(self, ticket: SupportTicket | dict[str, Any]) -> dict[str, Any]:
         item = ticket if isinstance(ticket, SupportTicket) else SupportTicket.from_mapping(ticket)
@@ -40,6 +50,11 @@ class CustomerServiceAgent:
             "redact_sensitive_data",
             "Remove email, payment-card and password text before policy matching.",
             "redacted" if redactions else "completed",
+        )
+        classification_hint = (
+            self._local_classifier.predict(sanitized_message)
+            if self.classification_mode == "local_vector"
+            else None
         )
 
         resolution = resolve_policy(self.policies, sanitized_message, self.analysis_date)
@@ -57,7 +72,7 @@ class CustomerServiceAgent:
                 "Stop automation because no single current policy supports a response.",
                 resolution.status,
             )
-            return self._unsupported(item, sanitized_message, redactions, trace.steps, resolution)
+            return self._unsupported(item, sanitized_message, redactions, trace.steps, resolution, classification_hint)
 
         lowered = sanitized_message.casefold()
         escalation_hits = [term for term in policy.escalation_keywords if term.casefold() in lowered]
@@ -86,6 +101,9 @@ class CustomerServiceAgent:
                 "category": policy.category,
                 "confidence": confidence,
                 "matched_keywords": matched_keywords,
+                "mode": self.classification_mode,
+                "adapter_hint": classification_hint,
+                "adapter_agrees": classification_hint is None or classification_hint["category"] == policy.category,
             },
             "policy_resolution": resolution.to_dict(self.analysis_date),
             "priority": priority,
@@ -110,7 +128,8 @@ class CustomerServiceAgent:
             },
             "trace": trace.steps,
             "limitations": [
-                "Classification uses explicit English keyword rules, not semantic understanding.",
+                "Classification uses explicit English keyword rules by default; the optional local vector mode is only a reviewable hint.",
+                "The local vector hint is deterministic and dependency-free, not a pretrained language model.",
                 "The response draft is policy-grounded but still requires an authorized human before sending.",
                 "The public workflow uses synthetic policies and does not connect to a ticketing platform.",
             ],
@@ -136,6 +155,7 @@ class CustomerServiceAgent:
         redactions: list[str],
         trace: list[dict[str, str]],
         resolution: PolicyResolution,
+        classification_hint: dict[str, object] | None,
     ) -> dict[str, Any]:
         return {
             "ticket_id": ticket.ticket_id,
@@ -146,6 +166,9 @@ class CustomerServiceAgent:
                 "category": resolution.category,
                 "confidence": "none",
                 "matched_keywords": list(resolution.matched_keywords),
+                "mode": self.classification_mode,
+                "adapter_hint": classification_hint if self.classification_mode == "local_vector" else None,
+                "adapter_agrees": None,
             },
             "policy_resolution": resolution.to_dict(self.analysis_date),
             "priority": "needs_review",

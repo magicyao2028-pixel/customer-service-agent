@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.6.0 - 2026-08-24
+
+- added an optional dependency-free local vector classification hint with explicit `keyword` and `local_vector` modes;
+- kept privacy redaction, policy resolution, abstention and human handoff authoritative over the hint;
+- added side-by-side evaluation reporting for both modes on the five-case synthetic fixture (5/5 each);
+- exposed the mode through the service and evaluation CLIs and added regression coverage;
+- expanded the evidence index to eight claims while retaining zero-cost, synthetic-data and no-production-accuracy boundaries.
+
 ## 0.5.0 - 2026-08-20
 
 - added phone and access-token redaction while requiring Luhn validation before card classification;

@@ -5,6 +5,7 @@
 - Overall: **PASS**
 - Redaction cases: 7/7
 - Behavior cases: 5/5
+- Local-vector behavior cases: 5/5
 - Feedback replay: 2/2
 
 ## Pilot boundary

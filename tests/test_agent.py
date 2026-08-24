@@ -33,6 +33,25 @@ class CustomerServiceAgentTests(unittest.TestCase):
         self.assertEqual(result["policy_citation"]["supersedes_policy_ids"], ["POL-RET-000"])
         self.assertFalse(result["human_handoff"]["required"])
 
+    def test_local_vector_mode_is_a_reviewable_hint_and_keeps_keyword_gate(self):
+        result = CustomerServiceAgent(
+            load_policies(POLICIES), analysis_date="2026-08-12", classification_mode="local_vector"
+        ).handle({
+            "ticket_id": "T-VECTOR",
+            "channel": "chat",
+            "customer_message": "The package is damaged and broken. I have photo evidence.",
+        })
+
+        self.assertEqual(result["status"], "triaged")
+        self.assertEqual(result["classification"]["mode"], "local_vector")
+        self.assertEqual(result["classification"]["category"], "damaged_product")
+        self.assertTrue(result["classification"]["adapter_hint"])
+        self.assertTrue(result["classification"]["adapter_agrees"])
+
+    def test_unknown_classification_mode_is_rejected(self):
+        with self.assertRaisesRegex(ValueError, "classification_mode"):
+            CustomerServiceAgent(load_policies(POLICIES), classification_mode="remote_model")
+
     def test_escalates_safety_incident_to_duty_manager(self):
         result = agent().handle({
             "ticket_id": "T-2",

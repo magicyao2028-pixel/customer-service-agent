@@ -8,14 +8,20 @@ from .agent import CustomerServiceAgent
 from .models import SupportTicket, load_policies
 
 
-def evaluate_cases(policy_path: Path, case_path: Path) -> dict[str, Any]:
+def evaluate_cases(
+    policy_path: Path,
+    case_path: Path,
+    classification_mode: str = "keyword",
+    *,
+    include_comparison: bool = True,
+) -> dict[str, Any]:
     try:
         cases = json.loads(case_path.read_text(encoding="utf-8"))
     except json.JSONDecodeError as exc:
         raise ValueError(f"Invalid evaluation JSON: {exc.msg}") from exc
     if not isinstance(cases, list) or not cases:
         raise ValueError("Evaluation cases must be a non-empty list")
-    agent = CustomerServiceAgent(load_policies(policy_path), analysis_date="2026-08-12")
+    agent = CustomerServiceAgent(load_policies(policy_path), analysis_date="2026-08-12", classification_mode=classification_mode)
     results = []
     seen: set[str] = set()
     for case in cases:
@@ -41,7 +47,8 @@ def evaluate_cases(policy_path: Path, case_path: Path) -> dict[str, Any]:
                 "policy_id": (output["policy_citation"] or {}).get("policy_id"),
             },
         })
-    return {
+    report = {
+        "classification_mode": classification_mode,
         "evaluation_version": "0.3",
         "method": "synthetic deterministic behavior checks; no production accuracy claim",
         "summary": {
@@ -51,6 +58,12 @@ def evaluate_cases(policy_path: Path, case_path: Path) -> dict[str, Any]:
         },
         "cases": results,
     }
+    if include_comparison:
+        report["mode_comparison"] = {
+            mode: evaluate_cases(policy_path, case_path, mode, include_comparison=False)["summary"]
+            for mode in ("keyword", "local_vector")
+        }
+    return report
 
 
 def write_evaluation(report: dict[str, Any], json_path: Path, markdown_path: Path) -> None:
@@ -61,6 +74,7 @@ def write_evaluation(report: dict[str, Any], json_path: Path, markdown_path: Pat
         "# Customer Service Agent Evaluation",
         "",
         f"- Method: {report['method']}",
+        f"- Classification mode: `{report['classification_mode']}`",
         f"- Result: **{report['summary']['passed_cases']}/{report['summary']['total_cases']} cases passed**",
         "",
         "| Case | Result | Status | Category | Handoff | Policy |",
@@ -73,6 +87,15 @@ def write_evaluation(report: dict[str, Any], json_path: Path, markdown_path: Pat
             f"{actual['category']} | {actual['handoff']} | {actual['policy_id'] or 'none'} |"
         )
     rows.extend([
+        "",
+        "## Classification-mode comparison",
+        "",
+        "| Mode | Passed | Pass rate |",
+        "| --- | --- | --- |",
+        *[
+            f"| `{mode}` | {summary['passed_cases']}/{summary['total_cases']} | {summary['pass_rate']:.0%} |"
+            for mode, summary in report.get("mode_comparison", {}).items()
+        ],
         "",
         "## Interpretation boundary",
         "",

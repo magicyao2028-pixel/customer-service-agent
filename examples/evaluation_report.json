@@ -1,4 +1,5 @@
 {
+  "classification_mode": "keyword",
   "evaluation_version": "0.3",
   "method": "synthetic deterministic behavior checks; no production accuracy claim",
   "summary": {
@@ -87,5 +88,17 @@
         "policy_id": null
       }
     }
-  ]
+  ],
+  "mode_comparison": {
+    "keyword": {
+      "total_cases": 5,
+      "passed_cases": 5,
+      "pass_rate": 1.0
+    },
+    "local_vector": {
+      "total_cases": 5,
+      "passed_cases": 5,
+      "pass_rate": 1.0
+    }
+  }
 }

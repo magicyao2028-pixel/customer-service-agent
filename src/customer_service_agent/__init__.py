@@ -6,6 +6,7 @@ from .models import SupportPolicy, SupportTicket, load_policies, load_ticket
 from .policy_resolution import PolicyResolution, resolve_policy
 from .feedback import load_feedback, replay_feedback, write_feedback_replay
 from .privacy_evaluation import evaluate_redaction_cases, write_redaction_report
+from .classification import LocalLanguageClassificationAdapter
 
 __all__ = [
     "CustomerServiceAgent",
@@ -23,5 +24,6 @@ __all__ = [
     "write_feedback_replay",
     "evaluate_redaction_cases",
     "write_redaction_report",
+    "LocalLanguageClassificationAdapter",
 ]
-__version__ = "0.5.0"
+__version__ = "0.6.0"
