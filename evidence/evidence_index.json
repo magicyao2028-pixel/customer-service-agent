@@ -8,6 +8,7 @@
     {"claim_id": "SERVICE-FEEDBACK-001", "statement": "A synthetic privacy requirement links implementation to regression evidence.", "artifacts": [{"kind": "feedback", "path": "evidence/feedback_case.json"}]},
     {"claim_id": "SERVICE-LIMIT-001", "statement": "Exact-pattern, synthetic-data and human-authority limitations remain explicit.", "artifacts": [{"kind": "security", "path": "docs/SECURITY.md"}, {"kind": "handoff", "path": "HANDOFF.md"}]},
     {"claim_id": "SERVICE-CLASSIFICATION-001", "statement": "An optional dependency-free local vector classification hint can be compared with the deterministic keyword baseline while privacy, policy resolution and human-handoff gates remain authoritative.", "artifacts": [{"kind": "implementation", "path": "src/customer_service_agent/classification.py"}, {"kind": "tests", "path": "tests/test_agent.py"}, {"kind": "report", "path": "examples/evaluation_report.json"}]}
+    ,{"claim_id": "SERVICE-REVIEW-HINT-001", "statement": "Local-vector classification hints expose a deterministic score margin and recommend human review for low-confidence, narrow-margin or unknown messages without changing the keyword policy gate.", "artifacts": [{"kind": "implementation", "path": "src/customer_service_agent/classification.py"}, {"kind": "test", "path": "tests/test_agent.py"}, {"kind": "handoff", "path": "HANDOFF.md"}]}
   ],
   "boundaries": [
     "Selected exact patterns only; this is not full DLP, identity verification or a production privacy claim.",

@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.7.0 - 2026-08-26
+
+- added deterministic score-margin and review-recommendation fields to the optional local-vector hint;
+- marked unknown, low-confidence and narrow-margin hints for human review without changing policy resolution;
+- added regression evidence while retaining privacy, handoff and no-send boundaries.
+
 ## 0.6.0 - 2026-08-24
 
 - added an optional dependency-free local vector classification hint with explicit `keyword` and `local_vector` modes;

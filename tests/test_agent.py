@@ -48,6 +48,20 @@ class CustomerServiceAgentTests(unittest.TestCase):
         self.assertTrue(result["classification"]["adapter_hint"])
         self.assertTrue(result["classification"]["adapter_agrees"])
 
+    def test_local_vector_hint_marks_unknown_message_for_review(self):
+        result = CustomerServiceAgent(
+            load_policies(POLICIES), analysis_date="2026-08-12", classification_mode="local_vector"
+        ).handle({
+            "ticket_id": "T-VECTOR-UNKNOWN",
+            "channel": "chat",
+            "customer_message": "zxqv qwerty orbital",
+        })
+
+        hint = result["classification"]["adapter_hint"]
+        self.assertEqual(result["status"], "no_policy")
+        self.assertTrue(hint["review_recommended"])
+        self.assertIn(hint["review_reason"], {"no positive similarity", "low confidence or narrow score margin"})
+
     def test_unknown_classification_mode_is_rejected(self):
         with self.assertRaisesRegex(ValueError, "classification_mode"):
             CustomerServiceAgent(load_policies(POLICIES), classification_mode="remote_model")

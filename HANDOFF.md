@@ -2,8 +2,8 @@
 
 ## Current state
 
-- Release stage: v0.6 trial-readiness prototype.
-- Maintenance completed: 5/10.
+- Release stage: v0.7 trial-readiness prototype.
+- Maintenance completed: 6/10.
 - M3 evidence: provenance-labeled reviewer feedback, capture-time redaction, accepted-case replay, deterministic fingerprints, excluded pending feedback and guardrail checks.
 - Core flow: validate ticket → redact sensitive data → classify → resolve one current policy → route SLA/handoff or abstain → draft human-reviewed response.
 - Synthetic evaluation: 5/5 fixture cases pass.
@@ -11,6 +11,7 @@
 - Runtime cost: zero paid API dependency.
 - M4 evidence: seven-case redaction-quality fixture, phone/token patterns, Luhn-gated card detection, clean trial, seven-claim index, external screening and synthetic privacy-feedback regression.
 - M5 evidence: optional dependency-free local vector classification hint, side-by-side keyword/local-vector comparison at 5/5 on the same synthetic fixture, CLI exposure and an eight-claim evidence index. The keyword baseline remains authoritative and all privacy, policy and human-handoff gates are unchanged.
+- M6 evidence: local-vector hints now expose score margin and a review recommendation for low-confidence, narrow-margin or unknown messages; the hint remains non-authoritative and no automated reply or policy decision changes.
 
 ## Verification command
 
@@ -27,7 +28,7 @@ PYTHONPATH=src python -m customer_service_agent.evaluation_cli --classification-
 
 ## Next maintenance round
 
-M6 should evaluate one bounded improvement to the local classification hint or its review report without introducing a paid provider or weakening the deterministic policy, privacy and human-handoff gates. Any provider adapter requires separate evidence and must remain optional.
+M7 can evaluate a bounded review-report export without introducing a paid provider or weakening the deterministic policy, privacy and human-handoff gates. Any provider adapter requires separate evidence and must remain optional.
 
 ## Known limitations
 

@@ -69,14 +69,27 @@ class LocalLanguageClassificationAdapter:
             by_category[category] = (max(current[0], score), max(current[1], overlap))
         ranked = sorted(by_category.items(), key=lambda item: (-item[1][0], -item[1][1], item[0]))
         if not ranked or ranked[0][1][0] <= 0:
-            return {"category": "unknown", "confidence": "none", "scores": []}
+            return {
+                "category": "unknown",
+                "confidence": "none",
+                "scores": [],
+                "score_margin": 0.0,
+                "review_recommended": True,
+                "review_reason": "no positive similarity",
+            }
         top_category, (top_score, top_overlap) = ranked[0]
+        runner_up_score = ranked[1][1][0] if len(ranked) > 1 else 0.0
+        score_margin = round(top_score - runner_up_score, 4)
         confidence = "high" if top_score >= 0.55 and top_overlap >= 2 else "medium" if top_score >= 0.25 else "low"
+        review_recommended = confidence == "low" or score_margin < 0.1
         return {
             "category": top_category,
             "confidence": confidence,
             "score": round(top_score, 4),
             "matched_feature_count": top_overlap,
+            "score_margin": score_margin,
+            "review_recommended": review_recommended,
+            "review_reason": "low confidence or narrow score margin" if review_recommended else "sufficient separation for hint",
             "scores": [
                 {"category": category, "score": round(score, 4), "matched_feature_count": overlap}
                 for category, (score, overlap) in ranked
