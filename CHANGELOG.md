@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.8.0 - 2026-08-29
+
+- added a deterministic replay-review export for passed, failed and excluded feedback;
+- retained sanitized fingerprints only and explicitly excluded raw customer messages;
+- added bounded next actions, trial evidence and regression coverage without policy or reply execution.
+
 ## 0.7.0 - 2026-08-26
 
 - added deterministic score-margin and review-recommendation fields to the optional local-vector hint;

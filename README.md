@@ -29,6 +29,7 @@ Small support teams receive order, delivery, refund and safety questions across 
 - replays only explicitly accepted feedback as deterministic cases while preserving policy, privacy and handoff gates.
 - optionally produces a dependency-free local vector classification hint for side-by-side review; the keyword baseline remains authoritative.
 - reports the hint's score margin and recommends human review for low-confidence, narrow-margin or unknown messages.
+- exports a bounded replay-review report with next actions for passed, failed and excluded feedback without retaining raw customer messages.
 - evaluates five supported redaction types with a seven-case synthetic fixture whose report never stores source messages or sensitive values;
 - exposes one clean trial command and an eight-claim machine-readable evidence index for reviewer verification.
 
@@ -138,7 +139,8 @@ The optional `local_vector` mode is a deterministic, dependency-free character/t
 - v0.4: governed reviewer-feedback capture and deterministic replay;
 - v0.5: redaction-quality evaluation and trial-readiness evidence;
 - v0.6: optional dependency-free local vector classification hint and side-by-side comparison behind the deterministic safety boundary;
-- v0.7: score-margin review recommendations for low-confidence or unknown hints (current);
+- v0.7: score-margin review recommendations for low-confidence or unknown hints;
+- v0.8: bounded replay-review export with no-send and no-policy-change boundaries (current);
 - v1.0: controlled private pilot with authenticated support users.
 
 ## License

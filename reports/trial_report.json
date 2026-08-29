@@ -27,6 +27,49 @@
     "source_type": "synthetic",
     "passed": true
   },
+  "feedback_review_export": {
+    "schema_version": "1.0",
+    "review_export_version": "0.7",
+    "batch_id": "SYNTHETIC-REVIEW-BATCH-001",
+    "analysis_date": "2026-08-12",
+    "records": [
+      {
+        "feedback_id": "FB-AUTOMATION-003",
+        "record_type": "excluded",
+        "issue_type": null,
+        "reviewer_alias": null,
+        "status": "excluded",
+        "failed_checks": [],
+        "recommended_action": "await_explicit_acceptance",
+        "exclusion_reason": "feedback does not alter policy or enter replay until explicitly accepted"
+      },
+      {
+        "feedback_id": "FB-CONFLICT-002",
+        "record_type": "replayed",
+        "issue_type": "policy_conflict",
+        "reviewer_alias": "synthetic-policy-owner",
+        "status": "passed",
+        "failed_checks": [],
+        "recommended_action": "retain_regression_coverage",
+        "sanitized_ticket_fingerprint": "4e4f3b139371eeb0bf27e67053b68165e4583d62034d6816a6050d5e34dd43bf"
+      },
+      {
+        "feedback_id": "FB-SAFE-001",
+        "record_type": "replayed",
+        "issue_type": "urgent_routing",
+        "reviewer_alias": "synthetic-support-lead",
+        "status": "passed",
+        "failed_checks": [],
+        "recommended_action": "retain_regression_coverage",
+        "sanitized_ticket_fingerprint": "65af60a84e76a56b0e9c8930375aac1fb7038b52e4933beafad77a0d5b97e905"
+      }
+    ],
+    "record_count": 3,
+    "decisions_applied": false,
+    "external_actions_executed": 0,
+    "raw_customer_messages_retained": false,
+    "authority_boundary": "This export organizes human follow-up only; it does not change policy, send replies or approve automated decisions."
+  },
   "external_intake": [
     {
       "repository": "https://github.com/data-privacy-stack/presidio",
@@ -108,6 +151,15 @@
         "src/customer_service_agent/classification.py",
         "tests/test_agent.py",
         "HANDOFF.md"
+      ],
+      "passed": true
+    },
+    {
+      "claim_id": "SERVICE-REVIEW-EXPORT-001",
+      "artifact_paths": [
+        "src/customer_service_agent/review_export.py",
+        "tests/test_feedback.py",
+        "reports/trial_report.json"
       ],
       "passed": true
     }

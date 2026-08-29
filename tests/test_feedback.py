@@ -5,6 +5,7 @@ from pathlib import Path
 from tempfile import TemporaryDirectory
 
 from customer_service_agent.feedback import load_feedback, replay_feedback, write_feedback_replay
+from customer_service_agent.review_export import build_review_report_export
 
 
 ROOT = Path(__file__).parents[1]
@@ -92,6 +93,15 @@ class ReviewerFeedbackReplayTests(unittest.TestCase):
             markdown = markdown_path.read_text(encoding="utf-8")
             self.assertIn("2/2 replay cases passed", markdown)
             self.assertIn("does not alter policy", markdown)
+
+    def test_review_export_is_safe_and_actionable(self):
+        export = build_review_report_export(replay_feedback(POLICIES, FEEDBACK))
+        self.assertEqual(export["record_count"], 3)
+        self.assertFalse(export["decisions_applied"])
+        self.assertFalse(export["raw_customer_messages_retained"])
+        self.assertEqual(export["external_actions_executed"], 0)
+        self.assertTrue(all("customer_message" not in item for item in export["records"]))
+        self.assertEqual(next(item for item in export["records"] if item["feedback_id"] == "FB-AUTOMATION-003")["status"], "excluded")
 
 
 if __name__ == "__main__":

@@ -16,6 +16,8 @@ class TrialTests(unittest.TestCase):
         self.assertTrue(report["overall_passed"])
         self.assertEqual(report["core_flow"]["redaction_cases"]["passed"], 7)
         self.assertEqual(report["core_flow"]["external_actions_executed"], 0)
+        self.assertEqual(report["feedback_review_export"]["record_count"], 3)
+        self.assertFalse(report["feedback_review_export"]["decisions_applied"])
 
     def test_external_intake_requires_full_sha_and_consistent_decision(self):
         payload = load_json_object(ROOT / "evidence/external_intake.json")
