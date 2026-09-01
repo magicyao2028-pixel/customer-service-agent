@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.9.0 - 2026-09-01
+
+- Added chronological reviewer-history visibility over replay/export records.
+- Preserved no-ticket-text retention and no-policy-application boundaries.
+
 ## 0.8.0 - 2026-08-29
 
 - added a deterministic replay-review export for passed, failed and excluded feedback;

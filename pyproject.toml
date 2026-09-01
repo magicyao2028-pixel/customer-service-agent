@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "customer-service-agent"
-version = "0.8.0"
+version = "0.9.0"
 description = "Offline customer-service triage with governed reviewer feedback and deterministic replay."
 readme = "README.md"
 requires-python = ">=3.10"

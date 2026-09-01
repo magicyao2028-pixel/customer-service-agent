@@ -1,0 +1,5 @@
+[
+  {"feedback_id": "FB-CONFLICT-002", "status": "passed", "recorded_on": "2026-08-14", "applied": false},
+  {"feedback_id": "FB-SAFE-001", "status": "passed", "recorded_on": "2026-08-14", "applied": false},
+  {"feedback_id": "FB-AUTOMATION-003", "status": "excluded", "recorded_on": "2026-08-15", "applied": false}
+]
