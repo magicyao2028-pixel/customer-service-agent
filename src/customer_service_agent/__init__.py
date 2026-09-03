@@ -30,5 +30,6 @@ __all__ = [
     "LocalLanguageClassificationAdapter",
     "build_review_report_export",
     "summarize_review_history",
+    "build_owner_followup_queue",
 ]
 __version__ = "1.0.0"
