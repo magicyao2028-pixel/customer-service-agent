@@ -30,7 +30,7 @@ PYTHONPATH=src python -m customer_service_agent.evaluation_cli --classification-
 
 ## Next maintenance round
 
-M10 can add a bounded owner-queue contract without introducing a paid provider or weakening the deterministic policy, privacy and human-handoff gates. Any provider adapter requires separate evidence and must remain optional.
+M10 can add bounded queue-aging and closure-state visibility without introducing a paid provider or weakening the deterministic policy, privacy and human-handoff gates. Any provider adapter requires separate evidence and must remain optional.
 
 ## M9 evidence
 
