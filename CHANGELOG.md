@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.0.0 - 2026-09-03
+
+- added a bounded owner follow-up queue derived from sanitized review history;
+- preserved policy, privacy, human-handoff and no-send boundaries;
+- added priority-order and fail-closed regression coverage.
+
 ## 0.9.0 - 2026-09-01
 
 - Added chronological reviewer-history visibility over replay/export records.

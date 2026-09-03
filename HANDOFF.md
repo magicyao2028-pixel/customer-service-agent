@@ -2,8 +2,8 @@
 
 ## Current state
 
-- Release stage: v0.9 trial-readiness prototype.
-- Maintenance completed: 8/10.
+- Release stage: v1.0 trial-readiness prototype.
+- Maintenance completed: 9/10.
 - M3 evidence: provenance-labeled reviewer feedback, capture-time redaction, accepted-case replay, deterministic fingerprints, excluded pending feedback and guardrail checks.
 - Core flow: validate ticket → redact sensitive data → classify → resolve one current policy → route SLA/handoff or abstain → draft human-reviewed response.
 - Synthetic evaluation: 5/5 fixture cases pass.
@@ -30,7 +30,12 @@ PYTHONPATH=src python -m customer_service_agent.evaluation_cli --classification-
 
 ## Next maintenance round
 
-M9 can add a bounded owner-queue contract without introducing a paid provider or weakening the deterministic policy, privacy and human-handoff gates. Any provider adapter requires separate evidence and must remain optional.
+M10 can add a bounded owner-queue contract without introducing a paid provider or weakening the deterministic policy, privacy and human-handoff gates. Any provider adapter requires separate evidence and must remain optional.
+
+## M9 evidence
+
+- Sanitized review history is organized into a priority-ordered owner follow-up queue.
+- Queue items retain only feedback IDs, status and bounded next actions; replies, policy changes and customer-message retention remain disabled.
 
 ## Known limitations
 

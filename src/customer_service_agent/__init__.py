@@ -9,6 +9,7 @@ from .privacy_evaluation import evaluate_redaction_cases, write_redaction_report
 from .classification import LocalLanguageClassificationAdapter
 from .review_export import build_review_report_export
 from .review_history import summarize_review_history
+from .owner_queue import build_owner_followup_queue
 
 __all__ = [
     "CustomerServiceAgent",
@@ -30,4 +31,4 @@ __all__ = [
     "build_review_report_export",
     "summarize_review_history",
 ]
-__version__ = "0.9.0"
+__version__ = "1.0.0"

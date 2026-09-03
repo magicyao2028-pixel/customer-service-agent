@@ -11,6 +11,7 @@ from .feedback import replay_feedback
 from .review_export import build_review_report_export
 from .review_history import summarize_review_history
 from .privacy_evaluation import evaluate_redaction_cases
+from .owner_queue import build_owner_followup_queue
 
 
 COMMIT_PATTERN = re.compile(r"[0-9a-f]{40}")
@@ -95,6 +96,7 @@ def run_trial(root: Path) -> dict[str, Any]:
         review_export,
         json.loads((root / "data/review_history.json").read_text(encoding="utf-8")),
     )
+    owner_queue = build_owner_followup_queue(review_export, review_history)
     evidence = validate_evidence_index(root, load_json_object(root / "evidence/evidence_index.json"))
     external = validate_external_intake(load_json_object(root / "evidence/external_intake.json"))
     feedback = validate_feedback(root, load_json_object(root / "evidence/feedback_case.json"))
@@ -109,12 +111,14 @@ def run_trial(root: Path) -> dict[str, Any]:
         and review_history["entry_count"] == 3
         and review_history["decisions_applied"] is False
         and review_history["raw_customer_messages_retained"] is False
+        and owner_queue["item_count"] == 3
+        and owner_queue["decisions_applied"] is False
     )
     return {
         "schema_version": "1.0", "trial_id": "TRIAL-SERVICE-001", "source_data": "synthetic",
         "overall_passed": core_passed and feedback["passed"] and all(item["passed"] for item in evidence + external),
         "core_flow": {"passed": core_passed, "redaction_cases": privacy["summary"], "behavior_cases_passed": behavior["summary"]["passed_cases"], "local_vector_behavior_cases_passed": behavior["mode_comparison"]["local_vector"]["passed_cases"], "feedback_replay_passed": feedback_replay["summary"]["passed"], "external_actions_executed": 0},
-        "feedback_regression": feedback, "feedback_review_export": review_export, "review_history": review_history, "external_intake": external, "evidence_index": evidence,
+        "feedback_regression": feedback, "feedback_review_export": review_export, "review_history": review_history, "owner_followup_queue": owner_queue, "external_intake": external, "evidence_index": evidence,
         "boundaries": load_json_object(root / "evidence/evidence_index.json")["boundaries"],
     }
 

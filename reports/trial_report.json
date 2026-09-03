@@ -103,6 +103,37 @@
     "external_actions_executed": 0,
     "boundary": "History is descriptive reviewer evidence only; it does not change policy, send replies or retain ticket text."
   },
+  "owner_followup_queue": {
+    "schema_version": "1.0",
+    "items": [
+      {
+        "feedback_id": "FB-AUTOMATION-003",
+        "status": "excluded",
+        "priority": "high",
+        "next_action": "await_explicit_acceptance",
+        "applied": false
+      },
+      {
+        "feedback_id": "FB-CONFLICT-002",
+        "status": "passed",
+        "priority": "normal",
+        "next_action": "retain_regression_coverage",
+        "applied": false
+      },
+      {
+        "feedback_id": "FB-SAFE-001",
+        "status": "passed",
+        "priority": "normal",
+        "next_action": "retain_regression_coverage",
+        "applied": false
+      }
+    ],
+    "item_count": 3,
+    "decisions_applied": false,
+    "external_actions_executed": 0,
+    "raw_customer_messages_retained": false,
+    "authority_boundary": "This owner queue organizes sanitized follow-up only; it does not change policy, send replies or approve automated decisions."
+  },
   "external_intake": [
     {
       "repository": "https://github.com/data-privacy-stack/presidio",
@@ -203,6 +234,15 @@
         "data/review_history.json",
         "tests/test_review_history.py",
         "reports/trial_report.json"
+      ],
+      "passed": true
+    },
+    {
+      "claim_id": "SERVICE-OWNER-QUEUE-001",
+      "artifact_paths": [
+        "src/customer_service_agent/owner_queue.py",
+        "tests/test_owner_queue.py",
+        "src/customer_service_agent/trial.py"
       ],
       "passed": true
     }
