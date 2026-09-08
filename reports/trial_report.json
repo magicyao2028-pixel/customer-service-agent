@@ -288,7 +288,7 @@
         "src/customer_service_agent/queue_aging.py",
         "data/review_history.json",
         "tests/test_queue_aging.py",
-        "src/customer_service_agent/trial.py"
+        "reports/trial_report.json"
       ],
       "passed": true
     }
