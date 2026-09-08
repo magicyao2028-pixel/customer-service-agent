@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.1.0 - 2026-09-08
+
+- added deterministic owner-queue aging and closure-state visibility;
+- surfaced stale open feedback at an explicit analysis date;
+- preserved no-send, no-policy-application and no-raw-message-retention boundaries.
+
 ## 1.0.0 - 2026-09-03
 
 - added a bounded owner follow-up queue derived from sanitized review history;

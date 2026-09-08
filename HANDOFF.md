@@ -3,7 +3,7 @@
 ## Current state
 
 - Release stage: v1.0 trial-readiness prototype.
-- Maintenance completed: 9/10.
+- Maintenance completed: 10/10.
 - M3 evidence: provenance-labeled reviewer feedback, capture-time redaction, accepted-case replay, deterministic fingerprints, excluded pending feedback and guardrail checks.
 - Core flow: validate ticket → redact sensitive data → classify → resolve one current policy → route SLA/handoff or abstain → draft human-reviewed response.
 - Synthetic evaluation: 5/5 fixture cases pass.
@@ -28,14 +28,20 @@ PYTHONPATH=src python -m customer_service_agent.trial_cli
 PYTHONPATH=src python -m customer_service_agent.evaluation_cli --classification-mode local_vector
 ```
 
-## Next maintenance round
+## Maintenance status
 
-M10 can add bounded queue-aging and closure-state visibility without introducing a paid provider or weakening the deterministic policy, privacy and human-handoff gates. Any provider adapter requires separate evidence and must remain optional.
+The planned ten-round maintenance sequence is complete. Any later provider adapter or workflow integration requires a separate evidence-backed contract and must remain optional.
 
 ## M9 evidence
 
 - Sanitized review history is organized into a priority-ordered owner follow-up queue.
 - Queue items retain only feedback IDs, status and bounded next actions; replies, policy changes and customer-message retention remain disabled.
+
+## M10 evidence
+
+- Added deterministic owner-queue aging and closure-state visibility at an explicit analysis date.
+- The trial surfaces one open item, two closed items and one stale open item from sanitized history.
+- Aging is descriptive only: no replies are sent, no policy decisions are applied and no raw customer messages are retained.
 
 ## Known limitations
 

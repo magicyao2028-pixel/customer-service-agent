@@ -7,6 +7,7 @@
 - Behavior cases: 5/5
 - Local-vector behavior cases: 5/5
 - Feedback replay: 2/2
+- Owner queue aging: 1 open, 2 closed, 1 stale
 
 ## Pilot boundary
 

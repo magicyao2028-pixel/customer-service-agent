@@ -10,6 +10,7 @@ from .classification import LocalLanguageClassificationAdapter
 from .review_export import build_review_report_export
 from .review_history import summarize_review_history
 from .owner_queue import build_owner_followup_queue
+from .queue_aging import summarize_owner_queue_aging
 
 __all__ = [
     "CustomerServiceAgent",
@@ -31,5 +32,6 @@ __all__ = [
     "build_review_report_export",
     "summarize_review_history",
     "build_owner_followup_queue",
+    "summarize_owner_queue_aging",
 ]
 __version__ = "1.0.0"

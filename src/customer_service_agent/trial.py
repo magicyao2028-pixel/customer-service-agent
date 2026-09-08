@@ -12,6 +12,7 @@ from .review_export import build_review_report_export
 from .review_history import summarize_review_history
 from .privacy_evaluation import evaluate_redaction_cases
 from .owner_queue import build_owner_followup_queue
+from .queue_aging import summarize_owner_queue_aging
 
 
 COMMIT_PATTERN = re.compile(r"[0-9a-f]{40}")
@@ -97,6 +98,7 @@ def run_trial(root: Path) -> dict[str, Any]:
         json.loads((root / "data/review_history.json").read_text(encoding="utf-8")),
     )
     owner_queue = build_owner_followup_queue(review_export, review_history)
+    queue_aging = summarize_owner_queue_aging(owner_queue, review_history, as_of_date="2026-09-08")
     evidence = validate_evidence_index(root, load_json_object(root / "evidence/evidence_index.json"))
     external = validate_external_intake(load_json_object(root / "evidence/external_intake.json"))
     feedback = validate_feedback(root, load_json_object(root / "evidence/feedback_case.json"))
@@ -113,12 +115,16 @@ def run_trial(root: Path) -> dict[str, Any]:
         and review_history["raw_customer_messages_retained"] is False
         and owner_queue["item_count"] == 3
         and owner_queue["decisions_applied"] is False
+        and queue_aging["open_count"] == 1
+        and queue_aging["closed_count"] == 2
+        and queue_aging["stale_count"] == 1
+        and queue_aging["decisions_applied"] is False
     )
     return {
         "schema_version": "1.0", "trial_id": "TRIAL-SERVICE-001", "source_data": "synthetic",
         "overall_passed": core_passed and feedback["passed"] and all(item["passed"] for item in evidence + external),
         "core_flow": {"passed": core_passed, "redaction_cases": privacy["summary"], "behavior_cases_passed": behavior["summary"]["passed_cases"], "local_vector_behavior_cases_passed": behavior["mode_comparison"]["local_vector"]["passed_cases"], "feedback_replay_passed": feedback_replay["summary"]["passed"], "external_actions_executed": 0},
-        "feedback_regression": feedback, "feedback_review_export": review_export, "review_history": review_history, "owner_followup_queue": owner_queue, "external_intake": external, "evidence_index": evidence,
+        "feedback_regression": feedback, "feedback_review_export": review_export, "review_history": review_history, "owner_followup_queue": owner_queue, "owner_queue_aging": queue_aging, "external_intake": external, "evidence_index": evidence,
         "boundaries": load_json_object(root / "evidence/evidence_index.json")["boundaries"],
     }
 
@@ -134,7 +140,8 @@ def write_trial_report(root: Path, json_path: Path, markdown_path: Path) -> dict
         f"- Redaction cases: {report['core_flow']['redaction_cases']['passed']}/{report['core_flow']['redaction_cases']['total']}",
         f"- Behavior cases: {report['core_flow']['behavior_cases_passed']}/5",
         f"- Local-vector behavior cases: {report['core_flow']['local_vector_behavior_cases_passed']}/5",
-        f"- Feedback replay: {report['core_flow']['feedback_replay_passed']}/2", "", "## Pilot boundary", "",
+        f"- Feedback replay: {report['core_flow']['feedback_replay_passed']}/2",
+        f"- Owner queue aging: {report['owner_queue_aging']['open_count']} open, {report['owner_queue_aging']['closed_count']} closed, {report['owner_queue_aging']['stale_count']} stale", "", "## Pilot boundary", "",
         *[f"- {item}" for item in report["boundaries"]], "",
     ]), encoding="utf-8")
     return report

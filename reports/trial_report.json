@@ -134,6 +134,42 @@
     "raw_customer_messages_retained": false,
     "authority_boundary": "This owner queue organizes sanitized follow-up only; it does not change policy, send replies or approve automated decisions."
   },
+  "owner_queue_aging": {
+    "schema_version": "1.0",
+    "as_of_date": "2026-09-08",
+    "stale_after_days": 14,
+    "item_count": 3,
+    "open_count": 1,
+    "closed_count": 2,
+    "stale_count": 1,
+    "items": [
+      {
+        "feedback_id": "FB-CONFLICT-002",
+        "status": "passed",
+        "closure_state": "closed",
+        "age_days": 25,
+        "stale": false
+      },
+      {
+        "feedback_id": "FB-SAFE-001",
+        "status": "passed",
+        "closure_state": "closed",
+        "age_days": 25,
+        "stale": false
+      },
+      {
+        "feedback_id": "FB-AUTOMATION-003",
+        "status": "excluded",
+        "closure_state": "open",
+        "age_days": 24,
+        "stale": true
+      }
+    ],
+    "decisions_applied": false,
+    "replies_sent": 0,
+    "raw_customer_messages_retained": false,
+    "authority_boundary": "Queue aging exposes sanitized follow-up state only; it does not close tickets, change policy or send replies."
+  },
   "external_intake": [
     {
       "repository": "https://github.com/data-privacy-stack/presidio",
@@ -242,6 +278,16 @@
       "artifact_paths": [
         "src/customer_service_agent/owner_queue.py",
         "tests/test_owner_queue.py",
+        "src/customer_service_agent/trial.py"
+      ],
+      "passed": true
+    },
+    {
+      "claim_id": "SERVICE-QUEUE-AGING-001",
+      "artifact_paths": [
+        "src/customer_service_agent/queue_aging.py",
+        "data/review_history.json",
+        "tests/test_queue_aging.py",
         "src/customer_service_agent/trial.py"
       ],
       "passed": true
