@@ -37,6 +37,7 @@ class ConversationSession:
     max_clarification_turns: int
     state: ConversationState = ConversationState.NEW
     clarification_turns: int = 0
+    triage_evaluation_count: int = 0
     sanitized_messages: list[dict[str, str]] = field(default_factory=list)
     redactions_applied: list[str] = field(default_factory=list)
     timeline: list[dict[str, Any]] = field(default_factory=list)
@@ -58,6 +59,17 @@ class ConversationSession:
             }
         return {
             "ticket_id": self.ticket_id,
+            "conversation_guardrail_receipt": {
+                "schema_version": "1.0",
+                "triage_evaluation_count": self.triage_evaluation_count,
+                "clarification_retriage_count": max(0, self.triage_evaluation_count - 1),
+                "reply_retriage_performed": self.triage_evaluation_count == self.clarification_turns + 1,
+                "clarification_limit_enforced": 0 <= self.clarification_turns <= self.max_clarification_turns,
+                "customer_reply_requires_approval": (self.result or self.candidate_result or {}).get("human_handoff", {}).get("customer_reply_requires_approval") is True,
+                "customer_reply_sent": False,
+                "external_actions_executed": 0,
+                "original_messages_retained": False,
+            },
             "conversation_state": self.state.value,
             "clarification": {
                 "turns_used": self.clarification_turns,
@@ -117,18 +129,11 @@ class ConversationFlow:
         if order_id and order_id.strip():
             session.order_id = order_id.strip()
 
-        if session.order_id:
-            session.pending_prompt = None
-            self._transition(session, ConversationState.READY_FOR_TRIAGE, "required order ID supplied")
-            self._evaluate(session)
-        elif session.clarification_turns >= session.max_clarification_turns:
+        session.pending_prompt = None
+        self._transition(session, ConversationState.READY_FOR_TRIAGE, "clarification reply requires fresh policy and safety triage")
+        self._evaluate(session)
+        if session.state == ConversationState.NEEDS_CLARIFICATION and session.clarification_turns >= session.max_clarification_turns:
             self._handoff_after_limit(session)
-        else:
-            self._transition(
-                session,
-                ConversationState.NEEDS_CLARIFICATION,
-                "order ID still missing; one bounded clarification remains",
-            )
         return session
 
     def _evaluate(self, session: ConversationSession) -> None:
@@ -139,6 +144,7 @@ class ConversationFlow:
             order_id=session.order_id,
         )
         candidate = self.agent.handle(ticket)
+        session.triage_evaluation_count += 1
         session.candidate_result = candidate
         self._merge_privacy(session, candidate)
 

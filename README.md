@@ -31,7 +31,8 @@ Small support teams receive order, delivery, refund and safety questions across 
 - reports the hint's score margin and recommends human review for low-confidence, narrow-margin or unknown messages.
 - exports a bounded replay-review report with next actions for passed, failed and excluded feedback without retaining raw customer messages.
 - evaluates five supported redaction types with a seven-case synthetic fixture whose report never stores source messages or sensitive values;
-- exposes one clean trial command and an eight-claim machine-readable evidence index for reviewer verification.
+- exposes one clean trial command and a fourteen-claim machine-readable evidence index for reviewer verification;
+- re-triages every processed clarification reply before requesting an order ID or enforcing the turn limit, so supported urgent signals are not delayed.
 
 ## What this repository demonstrates
 
@@ -44,7 +45,8 @@ Small support teams receive order, delivery, refund and safety questions across 
 | Engineering evidence | Typed Python package, deterministic 5/5 behavior fixture in both classification modes, 2/2 feedback replay and 7/7 privacy fixture |
 | Product experience | Zero-cost [browser prototype](site/) showing triage and handoff states |
 | Feedback loop | Provenance, disposition, sanitized case fingerprint, replay checks and excluded pending feedback |
-| Trial readiness | [15–20 minute offline trial](docs/TRIAL_GUIDE.md), seven evidence claims and governed external screening |
+| Trial readiness | [15–20 minute offline trial](docs/TRIAL_GUIDE.md), fourteen evidence claims and governed external screening |
+| Conversation guardrails | [Four synthetic reply regressions](data/conversation_guardrail_cases.json), per-session retriage/no-send receipt and required Trial gates |
 
 ## Core workflow
 
@@ -67,6 +69,8 @@ The implementation is deterministic and keyword-based. It is an Agent workflow b
 ## Quick start
 
 Requirements: Python 3.10 or later. No third-party runtime dependency is required.
+
+Current Python release: v1.2.0. Every accepted clarification reply is sanitized and evaluated again before the order-ID/turn-limit gate. A supported safety incident or explicit escalation signal therefore takes priority, including on the last allowed turn. Normal clarification still stops after at most two turns, and every customer reply requires human approval. `conversation_guardrail_receipt` exposes actual evaluation/retriage counts and zero-send/privacy controls. This is an offline routing decision, not an actual incident notification or ticketing action. The static browser sample is unchanged and does not implement the new Python retriage receipt.
 
 ```bash
 python -m pip install -e .
@@ -140,8 +144,9 @@ The optional `local_vector` mode is a deterministic, dependency-free character/t
 - v0.5: redaction-quality evaluation and trial-readiness evidence;
 - v0.6: optional dependency-free local vector classification hint and side-by-side comparison behind the deterministic safety boundary;
 - v0.7: score-margin review recommendations for low-confidence or unknown hints;
-- v0.8: bounded replay-review export with no-send and no-policy-change boundaries (current);
-- v1.0: controlled private pilot with authenticated support users.
+- v0.8–v1.1: bounded review export/history, owner follow-up and sanitized queue aging;
+- v1.2 (current): reply-by-reply retriage before clarification limits, with zero-send receipts and required Trial regressions;
+- future, separately approved: controlled private pilot with authenticated support users.
 
 ## License
 

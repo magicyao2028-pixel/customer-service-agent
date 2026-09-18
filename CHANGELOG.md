@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.2.0 - 2026-09-18
+
+- re-triaged every processed clarification reply before order-ID/turn-limit handling, closing reproduced delayed safety escalation on first and final replies;
+- added per-session actual retriage/approval/no-send/privacy receipts, four synthetic conversation paths and direct receipt/report mutation tests;
+- bound returned history/export/queue no-send/privacy/application controls into Trial PASS and corrected the owner-queue trial link to its generated report;
+- aligned package/import metadata and current docs at 1.2.0; retained keyword/redaction limitations and unchanged static sample;
+- kept M10/10 closed: no external notification, reply, policy write or model call.
+
 ## 1.1.0 - 2026-09-08
 
 - added deterministic owner-queue aging and closure-state visibility;

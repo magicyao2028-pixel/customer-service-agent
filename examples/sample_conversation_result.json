@@ -1,5 +1,16 @@
 {
   "ticket_id": "DEMO-CONV-001",
+  "conversation_guardrail_receipt": {
+    "schema_version": "1.0",
+    "triage_evaluation_count": 2,
+    "clarification_retriage_count": 1,
+    "reply_retriage_performed": true,
+    "clarification_limit_enforced": true,
+    "customer_reply_requires_approval": true,
+    "customer_reply_sent": false,
+    "external_actions_executed": 0,
+    "original_messages_retained": false
+  },
   "conversation_state": "triaged",
   "clarification": {
     "turns_used": 1,
@@ -27,7 +38,10 @@
       "matched_keywords": [
         "damaged",
         "broken"
-      ]
+      ],
+      "mode": "keyword",
+      "adapter_hint": null,
+      "adapter_agrees": true
     },
     "policy_citation": {
       "policy_id": "POL-RET-001",
@@ -58,7 +72,10 @@
       "matched_keywords": [
         "damaged",
         "broken"
-      ]
+      ],
+      "mode": "keyword",
+      "adapter_hint": null,
+      "adapter_agrees": true
     },
     "policy_resolution": {
       "analysis_date": "2026-08-12",
@@ -139,7 +156,8 @@
       }
     ],
     "limitations": [
-      "Classification uses explicit English keyword rules, not semantic understanding.",
+      "Classification uses explicit English keyword rules by default; the optional local vector mode is only a reviewable hint.",
+      "The local vector hint is deterministic and dependency-free, not a pretrained language model.",
       "The response draft is policy-grounded but still requires an authorized human before sending.",
       "The public workflow uses synthetic policies and does not connect to a ticketing platform."
     ]
@@ -160,7 +178,7 @@
     {
       "from": "needs_clarification",
       "to": "ready_for_triage",
-      "reason": "required order ID supplied",
+      "reason": "clarification reply requires fresh policy and safety triage",
       "clarification_turn": 1
     },
     {

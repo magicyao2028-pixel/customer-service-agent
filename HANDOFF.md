@@ -2,7 +2,7 @@
 
 ## Current state
 
-- Release stage: v1.0 trial-readiness prototype.
+- Release stage: v1.2.0 trial-readiness prototype with post-M10 clarification-retriage hardening.
 - Maintenance completed: 10/10.
 - M3 evidence: provenance-labeled reviewer feedback, capture-time redaction, accepted-case replay, deterministic fingerprints, excluded pending feedback and guardrail checks.
 - Core flow: validate ticket → redact sensitive data → classify → resolve one current policy → route SLA/handoff or abstain → draft human-reviewed response.
@@ -52,3 +52,12 @@ The planned ten-round maintenance sequence is complete. Any later provider adapt
 - deterministic reply templates and in-memory state rather than model-generated conversation or a database;
 - no persistence, authentication, ticketing integration, queue or real user study;
 - browser and Python implementations are mirrored manually.
+
+## Post-M10 P3 result
+
+- Baseline: 55 tests and Trial PASS. A supported safety message in clarification without an order ID stayed `needs_clarification` on turn 1 and became ordinary `clarification_exhausted` on turn 2, although fresh triage returned `escalated`.
+- Every processed sanitized reply now re-enters policy/safety triage before order-ID and turn-limit handling. Existing supported escalation and fail-closed policy resolution remain authoritative; normal clarification remains bounded.
+- Added an actual per-session evaluation/retriage receipt and four synthetic cases: safety on first reply, safety at the final turn, explicit same-policy escalation and normal exhaustion.
+- Every new receipt field plus returned no-send/privacy/application controls is required by Trial PASS and direct mutation tests; report exports retain labels/counts, not fixture messages.
+- Package/import metadata and current docs are aligned at v1.2.0. Historical M10 changelog v1.1.0 was not reflected in package metadata and is not reused as the new release.
+- M10/10 remains complete, not M11. No reply, notification, policy write, model call or ticketing integration occurs. English keyword coverage and selected redaction patterns remain limited. The unchanged static sample does not demonstrate the new Python guardrail.

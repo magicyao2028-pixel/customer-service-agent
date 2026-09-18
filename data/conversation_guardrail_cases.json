@@ -1,0 +1,10 @@
+{
+  "source_data": "synthetic",
+  "analysis_date": "2026-08-12",
+  "cases": [
+    {"case_id": "CONV-SAFE-001", "ticket": {"ticket_id": "SYN-CONV-001", "channel": "chat", "customer_message": "I need a refund."}, "replies": [{"message": "I have an injury and this is unsafe; it is a safety concern. Contact person@example.com."}], "expected_state": "escalated", "expected_status": "escalated", "expected_policy_id": "POL-SAFE-003", "expected_turns": 1},
+    {"case_id": "CONV-SAFE-002", "ticket": {"ticket_id": "SYN-CONV-002", "channel": "chat", "customer_message": "I need a refund."}, "replies": [{"message": "I am still looking for the reference."}, {"message": "I have an injury and this is unsafe; it is a safety concern."}], "expected_state": "escalated", "expected_status": "escalated", "expected_policy_id": "POL-SAFE-003", "expected_turns": 2},
+    {"case_id": "CONV-ESC-003", "ticket": {"ticket_id": "SYN-CONV-003", "channel": "email", "customer_message": "I need a refund."}, "replies": [{"message": "This refund involves fraud and legal action."}], "expected_state": "escalated", "expected_status": "escalated", "expected_policy_id": "POL-REF-004", "expected_turns": 1},
+    {"case_id": "CONV-LIMIT-004", "ticket": {"ticket_id": "SYN-CONV-004", "channel": "chat", "customer_message": "I need a refund."}, "replies": [{"message": "I am still looking for the reference."}, {"message": "I cannot find the order ID."}], "expected_state": "human_handoff", "expected_status": "clarification_exhausted", "expected_policy_id": "POL-REF-004", "expected_turns": 2}
+  ]
+}

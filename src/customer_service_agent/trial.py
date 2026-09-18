@@ -13,6 +13,7 @@ from .review_history import summarize_review_history
 from .privacy_evaluation import evaluate_redaction_cases
 from .owner_queue import build_owner_followup_queue
 from .queue_aging import summarize_owner_queue_aging
+from .conversation_guardrails import evaluate_conversation_guardrails, conversation_report_passed
 
 
 COMMIT_PATTERN = re.compile(r"[0-9a-f]{40}")
@@ -99,6 +100,8 @@ def run_trial(root: Path) -> dict[str, Any]:
     )
     owner_queue = build_owner_followup_queue(review_export, review_history)
     queue_aging = summarize_owner_queue_aging(owner_queue, review_history, as_of_date="2026-09-08")
+    conversations = evaluate_conversation_guardrails(root / "data/support_policies.json", root / "data/conversation_guardrail_cases.json")
+    conversation_checks = conversation_report_passed(conversations, load_json_object(root / "data/conversation_guardrail_cases.json")["cases"])
     evidence = validate_evidence_index(root, load_json_object(root / "evidence/evidence_index.json"))
     external = validate_external_intake(load_json_object(root / "evidence/external_intake.json"))
     feedback = validate_feedback(root, load_json_object(root / "evidence/feedback_case.json"))
@@ -115,16 +118,31 @@ def run_trial(root: Path) -> dict[str, Any]:
         and review_history["raw_customer_messages_retained"] is False
         and owner_queue["item_count"] == 3
         and owner_queue["decisions_applied"] is False
+        and owner_queue["raw_customer_messages_retained"] is False
+        and type(owner_queue["external_actions_executed"]) is int and owner_queue["external_actions_executed"] == 0
+        and type(review_export["external_actions_executed"]) is int and review_export["external_actions_executed"] == 0
+        and type(review_history["external_actions_executed"]) is int and review_history["external_actions_executed"] == 0
         and queue_aging["open_count"] == 1
         and queue_aging["closed_count"] == 2
         and queue_aging["stale_count"] == 1
         and queue_aging["decisions_applied"] is False
+        and queue_aging["raw_customer_messages_retained"] is False
+        and type(queue_aging["replies_sent"]) is int and queue_aging["replies_sent"] == 0
+        and all(item["applied"] is False for item in owner_queue["items"])
+        and all(item["applied"] is False for item in review_history["entries"])
+        and conversation_checks
+        and conversations["total_cases"] == 4 and conversations["passed_cases"] == 4
+        and all(case["passed"] is True for case in conversations["cases"])
+        and conversations["raw_customer_messages_retained"] is False
+        and conversations["customer_replies_sent"] is False
+        and type(conversations["external_actions_executed"]) is int and conversations["external_actions_executed"] == 0
     )
     return {
         "schema_version": "1.0", "trial_id": "TRIAL-SERVICE-001", "source_data": "synthetic",
         "overall_passed": core_passed and feedback["passed"] and all(item["passed"] for item in evidence + external),
-        "core_flow": {"passed": core_passed, "redaction_cases": privacy["summary"], "behavior_cases_passed": behavior["summary"]["passed_cases"], "local_vector_behavior_cases_passed": behavior["mode_comparison"]["local_vector"]["passed_cases"], "feedback_replay_passed": feedback_replay["summary"]["passed"], "external_actions_executed": 0},
+        "core_flow": {"passed": core_passed, "redaction_cases": privacy["summary"], "behavior_cases_passed": behavior["summary"]["passed_cases"], "local_vector_behavior_cases_passed": behavior["mode_comparison"]["local_vector"]["passed_cases"], "feedback_replay_passed": feedback_replay["summary"]["passed"], "external_actions_executed": sum((review_export["external_actions_executed"], review_history["external_actions_executed"], owner_queue["external_actions_executed"], queue_aging["replies_sent"], conversations["external_actions_executed"]))},
         "feedback_regression": feedback, "feedback_review_export": review_export, "review_history": review_history, "owner_followup_queue": owner_queue, "owner_queue_aging": queue_aging, "external_intake": external, "evidence_index": evidence,
+        "conversation_guardrails": conversations,
         "boundaries": load_json_object(root / "evidence/evidence_index.json")["boundaries"],
     }
 
@@ -141,6 +159,7 @@ def write_trial_report(root: Path, json_path: Path, markdown_path: Path) -> dict
         f"- Behavior cases: {report['core_flow']['behavior_cases_passed']}/5",
         f"- Local-vector behavior cases: {report['core_flow']['local_vector_behavior_cases_passed']}/5",
         f"- Feedback replay: {report['core_flow']['feedback_replay_passed']}/2",
+        f"- Clarification-retriage guardrails: {report['conversation_guardrails']['passed_cases']}/{report['conversation_guardrails']['total_cases']} (no replies sent)",
         f"- Owner queue aging: {report['owner_queue_aging']['open_count']} open, {report['owner_queue_aging']['closed_count']} closed, {report['owner_queue_aging']['stale_count']} stale", "", "## Pilot boundary", "",
         *[f"- {item}" for item in report["boundaries"]], "",
     ]), encoding="utf-8")

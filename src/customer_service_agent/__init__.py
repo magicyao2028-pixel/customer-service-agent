@@ -34,4 +34,4 @@ __all__ = [
     "build_owner_followup_queue",
     "summarize_owner_queue_aging",
 ]
-__version__ = "1.0.0"
+__version__ = "1.2.0"

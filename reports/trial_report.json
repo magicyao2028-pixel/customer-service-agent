@@ -278,7 +278,7 @@
       "artifact_paths": [
         "src/customer_service_agent/owner_queue.py",
         "tests/test_owner_queue.py",
-        "src/customer_service_agent/trial.py"
+        "reports/trial_report.json"
       ],
       "passed": true
     },
@@ -291,8 +291,100 @@
         "reports/trial_report.json"
       ],
       "passed": true
+    },
+    {
+      "claim_id": "SERVICE-CONVERSATION-GUARDRAIL-001",
+      "artifact_paths": [
+        "src/customer_service_agent/conversation.py",
+        "data/conversation_guardrail_cases.json",
+        "tests/test_conversation_guardrails.py",
+        "reports/trial_report.json"
+      ],
+      "passed": true
     }
   ],
+  "conversation_guardrails": {
+    "source_data": "synthetic",
+    "total_cases": 4,
+    "passed_cases": 4,
+    "cases": [
+      {
+        "case_id": "CONV-SAFE-001",
+        "passed": true,
+        "observed_state": "escalated",
+        "observed_status": "escalated",
+        "policy_id": "POL-SAFE-003",
+        "receipt": {
+          "schema_version": "1.0",
+          "triage_evaluation_count": 2,
+          "clarification_retriage_count": 1,
+          "reply_retriage_performed": true,
+          "clarification_limit_enforced": true,
+          "customer_reply_requires_approval": true,
+          "customer_reply_sent": false,
+          "external_actions_executed": 0,
+          "original_messages_retained": false
+        }
+      },
+      {
+        "case_id": "CONV-SAFE-002",
+        "passed": true,
+        "observed_state": "escalated",
+        "observed_status": "escalated",
+        "policy_id": "POL-SAFE-003",
+        "receipt": {
+          "schema_version": "1.0",
+          "triage_evaluation_count": 3,
+          "clarification_retriage_count": 2,
+          "reply_retriage_performed": true,
+          "clarification_limit_enforced": true,
+          "customer_reply_requires_approval": true,
+          "customer_reply_sent": false,
+          "external_actions_executed": 0,
+          "original_messages_retained": false
+        }
+      },
+      {
+        "case_id": "CONV-ESC-003",
+        "passed": true,
+        "observed_state": "escalated",
+        "observed_status": "escalated",
+        "policy_id": "POL-REF-004",
+        "receipt": {
+          "schema_version": "1.0",
+          "triage_evaluation_count": 2,
+          "clarification_retriage_count": 1,
+          "reply_retriage_performed": true,
+          "clarification_limit_enforced": true,
+          "customer_reply_requires_approval": true,
+          "customer_reply_sent": false,
+          "external_actions_executed": 0,
+          "original_messages_retained": false
+        }
+      },
+      {
+        "case_id": "CONV-LIMIT-004",
+        "passed": true,
+        "observed_state": "human_handoff",
+        "observed_status": "clarification_exhausted",
+        "policy_id": "POL-REF-004",
+        "receipt": {
+          "schema_version": "1.0",
+          "triage_evaluation_count": 3,
+          "clarification_retriage_count": 2,
+          "reply_retriage_performed": true,
+          "clarification_limit_enforced": true,
+          "customer_reply_requires_approval": true,
+          "customer_reply_sent": false,
+          "external_actions_executed": 0,
+          "original_messages_retained": false
+        }
+      }
+    ],
+    "raw_customer_messages_retained": false,
+    "customer_replies_sent": false,
+    "external_actions_executed": 0
+  },
   "boundaries": [
     "Selected exact patterns only; this is not full DLP, identity verification or a production privacy claim.",
     "All tickets, policies and reviewer records are synthetic; no real customer adoption is claimed.",

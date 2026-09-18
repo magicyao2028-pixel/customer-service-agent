@@ -6,6 +6,7 @@
 - The original message is not included in the result.
 - No response, refund, compensation or external action is executed.
 - Safety incidents and unsupported requests require human handoff.
+- The v1.2 Python conversation flow re-triages each processed sanitized clarification reply before order-ID and turn-limit decisions. Supported escalation therefore takes priority over missing evidence, including on the last permitted turn. This is a keyword-based offline routing check, not complete incident detection or an external notification.
 - Stale policies, category conflicts and unresolved current versions are blocked rather than guessed.
 - The analysis date and version-selection evidence are included in the output for review.
 

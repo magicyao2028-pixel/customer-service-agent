@@ -1,5 +1,9 @@
 # System Architecture
 
+## Post-M10 clarification boundary (v1.2)
+
+`ConversationFlow.reply` sanitizes the new message, updates bounded in-memory state and re-enters `CustomerServiceAgent.handle` before making order-ID/turn-limit decisions. An escalated or blocked policy result is terminal; only a non-terminal missing-order case may reach normal clarification exhaustion. `ConversationSession.to_dict` exposes actual evaluation/retriage counts and non-sending controls. `conversation_guardrails.py` checks four synthetic paths; Trial independently rechecks the actual receipts and report controls. No network, persistence or browser implementation is added.
+
 ## v0.4 design goals
 
 - zero paid runtime dependency;
